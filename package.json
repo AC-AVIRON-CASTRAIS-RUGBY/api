@@ -1,0 +1,18 @@
+{
+  "name": "rugby-api",
+  "version": "0.0.0",
+  "description": "API Express pour un système de gestion de tournois de rugby",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "author": "RARCHAERT Alexis",
+  "license": "ISC"
+}
