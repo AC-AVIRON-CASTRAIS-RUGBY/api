@@ -28,6 +28,24 @@ npm install
 
 ```bash
 PORT=3000
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=nom_de_la_base_de_donnees
+DB_USER=utilisateur
+DB_PASSWORD=mot_de_passe
+```
+
+### 🗄️ Base de données
+> Cette API utilise une base de données mySQL. Voici les étapes à suivre pour la configurer :
+
+1. Créez une base de données
+2. Importez le fichier `db.sql` dans votre base de données
+3. Modifiez le fichier `.env` avec les informations de connexion à votre base de données
+4. Installez les dépendances nécessaires pour la connexion à la base de données
+
+```bash
+npm i mysql2
 ```
 
 ## ▶️ Lancer le serveur
