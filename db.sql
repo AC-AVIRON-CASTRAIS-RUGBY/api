@@ -13,6 +13,7 @@ CREATE TABLE Referee (
     Referee_Id INT AUTO_INCREMENT,
     last_name VARCHAR(50),
     first_name VARCHAR(50),
+    loginUUID VARCHAR(36) UNIQUE,
     PRIMARY KEY (Referee_Id)
 );
 
