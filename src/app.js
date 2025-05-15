@@ -4,6 +4,7 @@ const routes = require('./routes/index');
 const tournamentRoutes = require('./routes/tournamentRoutes');
 const poolRoutes = require('./routes/poolRoutes');
 const teamRoutes = require('./routes/teamRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.use('/', routes);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/pools', poolRoutes);
 app.use('/api/teams', teamRoutes);
+app.use('/api/games', gameRoutes);
 
 module.exports = app;
