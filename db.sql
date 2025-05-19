@@ -2,6 +2,7 @@ CREATE TABLE Tournament (
     Tournament_Id INT AUTO_INCREMENT,
     name VARCHAR(50),
     description TEXT,
+    image TEXT,
     start_date DATETIME,
     location VARCHAR(50),
     game_duration TINYINT,
