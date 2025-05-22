@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 exports.getAllTeams = async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Team');
+        const [rows] = await db.query('SELECT * FROM Team WHERE Tournament_Id = ?', [req.params.tournamentId]);
         res.status(200).json(rows);
     } catch (error) {
         console.error('Erreur lors de la récupération des équipes:', error);
@@ -15,7 +15,8 @@ exports.getAllTeams = async (req, res) => {
 
 exports.getTeamById = async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Team WHERE Team_Id = ?', [req.params.id]);
+        const [rows] = await db.query('SELECT * FROM Team WHERE Team_Id = ? AND Tournament_Id = ?',
+            [req.params.id, req.params.tournamentId]);
 
         if (rows.length === 0) {
             return res.status(404).json({ message: "Équipe non trouvée" });
@@ -32,16 +33,17 @@ exports.getTeamById = async (req, res) => {
 };
 
 exports.createTeam = async (req, res) => {
-    const { name, logo, age_category, Pool_Id, Tournament_Id } = req.body;
+    const { name, logo, age_category } = req.body;
+    const Tournament_Id = req.params.tournamentId;
 
-    if (!name || !Pool_Id || !Tournament_Id) {
-        return res.status(400).json({ message: "Le nom, l'ID de poule et l'ID de tournoi sont requis" });
+    if (!name) {
+        return res.status(400).json({ message: "Le nom de l'équipe est requis" });
     }
 
     try {
         const [result] = await db.query(
-            'INSERT INTO Team (name, logo, age_category, Pool_Id, Tournament_Id) VALUES (?, ?, ?, ?, ?)',
-            [name, logo, age_category, Pool_Id, Tournament_Id]
+            'INSERT INTO Team (name, logo, age_category, Tournament_Id) VALUES (?, ?, ?, ?)',
+            [name, logo, age_category, Tournament_Id]
         );
 
         res.status(201).json({
@@ -58,13 +60,14 @@ exports.createTeam = async (req, res) => {
 };
 
 exports.updateTeam = async (req, res) => {
-    const { name, logo, age_category, Pool_Id, Tournament_Id } = req.body;
+    const { name, logo, age_category, Pool_Id } = req.body;
     const teamId = req.params.id;
+    const Tournament_Id = req.params.tournamentId;
 
     try {
         const [result] = await db.query(
-            'UPDATE Team SET name = ?, logo = ?, age_category = ?, Pool_Id = ?, Tournament_Id = ? WHERE Team_Id = ?',
-            [name, logo, age_category, Pool_Id, Tournament_Id, teamId]
+            'UPDATE Team SET name = ?, logo = ?, age_category = ?, Pool_Id = ? WHERE Team_Id = ? AND Tournament_Id = ?',
+            [name, logo, age_category, Pool_Id, teamId, Tournament_Id]
         );
 
         if (result.affectedRows === 0) {
@@ -83,7 +86,8 @@ exports.updateTeam = async (req, res) => {
 
 exports.deleteTeam = async (req, res) => {
     try {
-        const [result] = await db.query('DELETE FROM Team WHERE Team_Id = ?', [req.params.id]);
+        const [result] = await db.query('DELETE FROM Team WHERE Team_Id = ? AND Tournament_Id = ?',
+            [req.params.id, req.params.tournamentId]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Équipe non trouvée" });
@@ -102,8 +106,10 @@ exports.deleteTeam = async (req, res) => {
 exports.getGamesByTeamId = async (req, res) => {
     try {
         const [rows] = await db.query(
-            'SELECT * FROM Game WHERE Team1_Id = ? OR Team2_Id = ?',
-            [req.params.id, req.params.id]
+            `SELECT g.* FROM Game g
+             JOIN Team t ON (g.Team1_Id = t.Team_Id OR g.Team2_Id = t.Team_Id)
+             WHERE t.Team_Id = ? AND t.Tournament_Id = ?`,
+            [req.params.id, req.params.tournamentId]
         );
         res.status(200).json(rows);
     } catch (error) {
@@ -117,6 +123,15 @@ exports.getGamesByTeamId = async (req, res) => {
 
 exports.getLockerRoomByTeamId = async (req, res) => {
     try {
+        const [teamExists] = await db.query(
+            'SELECT * FROM Team WHERE Team_Id = ? AND Tournament_Id = ?',
+            [req.params.id, req.params.tournamentId]
+        );
+
+        if (teamExists.length === 0) {
+            return res.status(404).json({ message: "Équipe non trouvée" });
+        }
+
         const [rows] = await db.query(
             'SELECT * FROM LockerRoom WHERE Team_Id = ?',
             [req.params.id]
