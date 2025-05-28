@@ -60,14 +60,33 @@ exports.createTeam = async (req, res) => {
 };
 
 exports.updateTeam = async (req, res) => {
-    const { name, logo, age_category, Pool_Id } = req.body;
+    const { name, logo, age_category } = req.body;
     const teamId = req.params.id;
     const Tournament_Id = req.params.tournamentId;
 
     try {
+        // Récupérer d'abord les valeurs actuelles
+        const [currentTeam] = await db.query(
+            'SELECT * FROM Team WHERE Team_Id = ? AND Tournament_Id = ?',
+            [teamId, Tournament_Id]
+        );
+
+        if (currentTeam.length === 0) {
+            return res.status(404).json({ message: "Équipe non trouvée" });
+        }
+
+        const current = currentTeam[0];
+
+        // Construire la requête avec les valeurs fournies ou existantes
         const [result] = await db.query(
-            'UPDATE Team SET name = ?, logo = ?, age_category = ?, Pool_Id = ? WHERE Team_Id = ? AND Tournament_Id = ?',
-            [name, logo, age_category, Pool_Id, teamId, Tournament_Id]
+            'UPDATE Team SET name = ?, logo = ?, age_category = ? WHERE Team_Id = ? AND Tournament_Id = ?',
+            [
+                name !== undefined ? name : current.name,
+                logo !== undefined ? logo : current.logo,
+                age_category !== undefined ? age_category : current.age_category,
+                teamId,
+                Tournament_Id
+            ]
         );
 
         if (result.affectedRows === 0) {

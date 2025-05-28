@@ -5,7 +5,10 @@ exports.getAllPoolsByTournament = async (req, res) => {
 
     try {
         const [rows] = await db.query(
-            'SELECT p.* FROM Pool p JOIN Phase ph ON p.Phase_Id = ph.Phase_Id WHERE ph.Tournament_Id = ?',
+            'SELECT p.*, c.name as category_name FROM Pool p ' +
+            'JOIN Phase ph ON p.Phase_Id = ph.Phase_Id ' +
+            'LEFT JOIN Category c ON p.Category_Id = c.Category_Id ' +
+            'WHERE ph.Tournament_Id = ?',
             [tournamentId]
         );
         res.status(200).json(rows);
@@ -23,7 +26,10 @@ exports.getPoolById = async (req, res) => {
 
     try {
         const [rows] = await db.query(
-            'SELECT p.* FROM Pool p JOIN Phase ph ON p.Phase_Id = ph.Phase_Id WHERE p.Pool_Id = ? AND ph.Tournament_Id = ?',
+            'SELECT p.*, c.name as category_name FROM Pool p ' +
+            'JOIN Phase ph ON p.Phase_Id = ph.Phase_Id ' +
+            'LEFT JOIN Category c ON p.Category_Id = c.Category_Id ' +
+            'WHERE p.Pool_Id = ? AND ph.Tournament_Id = ?',
             [id, tournamentId]
         );
 
@@ -62,7 +68,7 @@ exports.getTeamsByPoolId = async (req, res) => {
 };
 
 exports.createPool = async (req, res) => {
-    const { name, Phase_Id } = req.body;
+    const { name, Phase_Id, Category_Id } = req.body;
     const { tournamentId } = req.params;
 
     if (!name || !Phase_Id) {
@@ -80,9 +86,21 @@ exports.createPool = async (req, res) => {
             return res.status(400).json({ message: "Phase invalide pour ce tournoi" });
         }
 
+        // Vérifier que la catégorie appartient au tournoi spécifié (si fournie)
+        if (Category_Id) {
+            const [categories] = await db.query(
+                'SELECT * FROM Category WHERE Category_Id = ? AND Tournament_Id = ?',
+                [Category_Id, tournamentId]
+            );
+
+            if (categories.length === 0) {
+                return res.status(400).json({ message: "Catégorie invalide pour ce tournoi" });
+            }
+        }
+
         const [result] = await db.query(
-            'INSERT INTO Pool (name, Phase_Id) VALUES (?, ?)',
-            [name, Phase_Id]
+            'INSERT INTO Pool (name, Phase_Id, Category_Id) VALUES (?, ?, ?)',
+            [name, Phase_Id, Category_Id]
         );
 
         res.status(201).json({
@@ -99,7 +117,7 @@ exports.createPool = async (req, res) => {
 };
 
 exports.updatePool = async (req, res) => {
-    const { name, Phase_Id } = req.body;
+    const { name, Phase_Id, Category_Id } = req.body;
     const { id, tournamentId } = req.params;
 
     try {
@@ -125,9 +143,21 @@ exports.updatePool = async (req, res) => {
             }
         }
 
+        // Vérifier que la nouvelle catégorie appartient au tournoi spécifié
+        if (Category_Id) {
+            const [categories] = await db.query(
+                'SELECT * FROM Category WHERE Category_Id = ? AND Tournament_Id = ?',
+                [Category_Id, tournamentId]
+            );
+
+            if (categories.length === 0) {
+                return res.status(400).json({ message: "Catégorie invalide pour ce tournoi" });
+            }
+        }
+
         const [result] = await db.query(
-            'UPDATE Pool SET name = ?, Phase_Id = ? WHERE Pool_Id = ?',
-            [name, Phase_Id, id]
+            'UPDATE Pool SET name = ?, Phase_Id = ?, Category_Id = ? WHERE Pool_Id = ?',
+            [name, Phase_Id, Category_Id, id]
         );
 
         res.status(200).json({ message: "Poule mise à jour avec succès" });

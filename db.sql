@@ -453,3 +453,15 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE `Player` (
+                          `Player_Id` int(11) NOT NULL AUTO_INCREMENT,
+                          `first_name` varchar(50) NOT NULL,
+                          `last_name` varchar(50) NOT NULL,
+                          `number` int(11) DEFAULT NULL,
+                          `position` varchar(50) DEFAULT NULL,
+                          `Team_Id` int(11) NOT NULL,
+                          PRIMARY KEY (`Player_Id`),
+                          KEY `Team_Id` (`Team_Id`),
+                          CONSTRAINT `Player_ibfk_1` FOREIGN KEY (`Team_Id`) REFERENCES `Team` (`Team_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;

@@ -13,6 +13,23 @@ exports.getAllPhases = async (req, res) => {
     }
 };
 
+exports.getPhasesByTournamentId = async (req, res) => {
+    const { tournamentId } = req.params;
+    try {
+        const [rows] = await db.query('SELECT * FROM Phase WHERE Tournament_Id = ?', [tournamentId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "Aucune phase trouvée pour ce tournoi" });
+        }
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des phases du tournoi:', error);
+        res.status(500).json({
+            message: "Une erreur est survenue lors de la récupération des phases du tournoi",
+            error: error.message
+        });
+    }
+};
+
 exports.getPhaseById = async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM Phase WHERE Phase_Id = ?', [req.params.id]);

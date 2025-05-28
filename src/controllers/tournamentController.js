@@ -58,9 +58,30 @@ exports.updateTournament = async (req, res) => {
     const tournamentId = req.params.id;
 
     try {
+        // Récupérer d'abord les valeurs actuelles
+        const [currentTournament] = await db.query(
+            'SELECT * FROM Tournament WHERE Tournament_Id = ?',
+            [tournamentId]
+        );
+
+        if (currentTournament.length === 0) {
+            return res.status(404).json({ message: "Tournoi non trouvé" });
+        }
+
+        const current = currentTournament[0];
+
+        // Construire la requête dynamiquement avec les valeurs fournies ou existantes
         const [result] = await db.query(
             'UPDATE Tournament SET name = ?, description = ?, start_date = ?, location = ?, game_duration = ?, break_time = ? WHERE Tournament_Id = ?',
-            [name, description, start_date, location, game_duration, break_time, tournamentId]
+            [
+                name !== undefined ? name : current.name,
+                description !== undefined ? description : current.description,
+                start_date !== undefined ? start_date : current.start_date,
+                location !== undefined ? location : current.location,
+                game_duration !== undefined ? game_duration : current.game_duration,
+                break_time !== undefined ? break_time : current.break_time,
+                tournamentId
+            ]
         );
 
         if (result.affectedRows === 0) {
