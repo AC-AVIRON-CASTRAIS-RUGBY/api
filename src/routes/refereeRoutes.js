@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const refereeController = require('../controllers/refereeController');
 
-console.info('👨‍⚖️ Module refereeRoutes initialisé');
-
-// Middleware de debug spécifique aux arbitres
-router.use((req, res, next) => {
-    console.info(`👨‍⚖️ Route arbitre appelée: ${req.method} ${req.originalUrl}`);
-    next();
-});
-
 /**
  * @swagger
  * /api/referees:
@@ -28,10 +20,7 @@ router.use((req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/', (req, res, next) => {
-    console.info('📋 Récupération de tous les arbitres');
-    refereeController.getAllReferees(req, res, next);
-});
+router.get('/', refereeController.getAllReferees);
 
 /**
  * @swagger
@@ -75,10 +64,7 @@ router.get('/', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.post('/', (req, res, next) => {
-    console.info('➕ Création d\'un nouvel arbitre');
-    refereeController.createReferee(req, res, next);
-});
+router.post('/', refereeController.createReferee);
 
 /**
  * @swagger
@@ -105,10 +91,7 @@ router.post('/', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id', (req, res, next) => {
-    console.info(`🎯 Récupération de l'arbitre ${req.params.id}`);
-    refereeController.getRefereeById(req, res, next);
-});
+router.get('/:id', refereeController.getRefereeById);
 
 /**
  * @swagger
@@ -146,10 +129,7 @@ router.get('/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.put('/:id', (req, res, next) => {
-    console.info(`✏️ Mise à jour de l'arbitre ${req.params.id}`);
-    refereeController.updateReferee(req, res, next);
-});
+router.put('/:id', refereeController.updateReferee);
 
 /**
  * @swagger
@@ -172,10 +152,7 @@ router.put('/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.delete('/:id', (req, res, next) => {
-    console.info(`🗑️ Suppression de l'arbitre ${req.params.id}`);
-    refereeController.deleteReferee(req, res, next);
-});
+router.delete('/:id', refereeController.deleteReferee);
 
 /**
  * @swagger
@@ -202,10 +179,7 @@ router.delete('/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/uuid/:uuid', (req, res, next) => {
-    console.info(`🔑 Récupération de l'arbitre par UUID: ${req.params.uuid}`);
-    refereeController.getRefereeByUUID(req, res, next);
-});
+router.get('/uuid/:uuid', refereeController.getRefereeByUUID);
 
 /**
  * @swagger
@@ -232,10 +206,7 @@ router.get('/uuid/:uuid', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id/games', (req, res, next) => {
-    console.info(`🏟️ Récupération des matchs de l'arbitre ${req.params.id}`);
-    refereeController.getGamesByRefereeId(req, res, next);
-});
+router.get('/:id/games', refereeController.getGamesByRefereeId);
 
 /**
  * @swagger
@@ -280,10 +251,7 @@ router.get('/:id/games', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:id/tournaments', (req, res, next) => {
-    console.info(`🏆 Récupération des tournois de l'arbitre ${req.params.id}`);
-    refereeController.getTournamentsByRefereeId(req, res, next);
-});
+router.get('/:id/tournaments', refereeController.getTournamentsByRefereeId);
 
 /**
  * @swagger
@@ -312,11 +280,6 @@ router.get('/:id/tournaments', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/tournaments/:tournamentId', (req, res, next) => {
-    console.info(`👨‍⚖️ Récupération des arbitres du tournoi ${req.params.tournamentId}`);
-    refereeController.getRefereesByTournamentIdDirect(req, res, next);
-});
-
-console.info('👨‍⚖️ Routes arbitres configurées');
+router.get('/tournaments/:tournamentId', refereeController.getRefereesByTournamentIdDirect);
 
 module.exports = router;

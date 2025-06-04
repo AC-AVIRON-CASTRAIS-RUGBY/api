@@ -27,39 +27,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-console.info('🌐 CORS configuré pour les origines:', corsOptions.origin);
-
 app.use(express.json());
-
-// Middleware de debug global pour toutes les routes
-app.use((req, res, next) => {
-    const timestamp = new Date().toISOString();
-    console.info(`🌐 [${timestamp}] ${req.method} ${req.originalUrl}`);
-    console.info(`📍 IP: ${req.ip}`);
-    console.info(`🔗 User-Agent: ${req.get('User-Agent') || 'Non défini'}`);
-    console.info(`🔗 Origin: ${req.get('Origin') || 'Non défini'}`);
-    
-    if (req.method !== 'GET') {
-        console.info(`📦 Body: ${JSON.stringify(req.body)}`);
-    }
-    
-    if (Object.keys(req.query).length > 0) {
-        console.info(`🔍 Query params: ${JSON.stringify(req.query)}`);
-    }
-    
-    if (Object.keys(req.params).length > 0) {
-        console.info(`🎯 Route params: ${JSON.stringify(req.params)}`);
-    }
-    
-    // Log de la réponse
-    const originalSend = res.send;
-    res.send = function(data) {
-        console.info(`📤 [${timestamp}] Réponse ${res.statusCode} pour ${req.method} ${req.originalUrl}`);
-        originalSend.call(this, data);
-    };
-    
-    next();
-});
 
 // Servir les fichiers statiques depuis le dossier uploads
 app.use('/uploads', express.static('uploads'));

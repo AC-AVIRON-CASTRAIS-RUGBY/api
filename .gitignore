@@ -1,5 +1,37 @@
+# Dependencies
 /node_modules
-/uploads
+npm-debug.log*
 
-package-lock.json
+# Production build
+/dist
+/build
+
+# Environment variables
 .env
+.env.local
+.env.production
+.env.test
+
+# Uploads and temporary files
+/uploads
+*.tmp
+*.log
+
+# Lock files (keep one, ignore the other)
+package-lock.json
+yarn.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

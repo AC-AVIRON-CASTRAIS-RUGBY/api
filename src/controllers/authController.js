@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '24h';
+const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecret';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
@@ -187,9 +187,7 @@ exports.updatePassword = async (req, res) => {
         await db.query(
             'UPDATE Referee SET password = ? WHERE Referee_Id = ?',
             [hashedPassword, referee.Referee_Id]
-        );
-
-        res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+        );        res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
     } catch (error) {
         console.error('Erreur lors de la mise à jour du mot de passe:', error);
         res.status(500).json({
@@ -199,54 +197,45 @@ exports.updatePassword = async (req, res) => {
     }
 };
 
-// Générer un nom d'utilisateur basé sur prénom et nom
-function generateUsername(firstName, lastName) {
-    if (!firstName || !lastName) {
-        return `user_${uuidv4().substring(0, 8)}`;
+exports.refereeLogin = async (req, res) => {
+    const { loginUUID, password } = req.body;
+
+    if (!loginUUID || !password) {
+        return res.status(400).json({ 
+            message: "loginUUID et password sont requis" 
+        });
     }
 
-    const base = `${firstName.toLowerCase().substring(0, 1)}${lastName.toLowerCase().replace(/\s/g, '')}`;
-    const uniqueSuffix = Math.floor(Math.random() * 1000);
-    return `${base}${uniqueSuffix}`;
-}
-
-// Ajout d'une fonction pour créer un compte arbitre
-exports.createRefereeAccount = async (req, res) => {
-    const { refereeId } = req.params;
-
     try {
-        // Vérifier si l'arbitre existe
-        const [referees] = await db.query('SELECT * FROM Referee WHERE Referee_Id = ?', [refereeId]);
+        // Chercher l'arbitre par loginUUID
+        const [referees] = await db.query('SELECT * FROM Referee WHERE loginUUID = ?', [loginUUID]);
 
         if (referees.length === 0) {
-            return res.status(404).json({ message: "Arbitre non trouvé" });
+            return res.status(401).json({ 
+                message: "LoginUUID non trouvé" 
+            });
         }
 
         const referee = referees[0];
+        let isPasswordValid = password == referee.password;
 
-        // Vérifier si l'arbitre a déjà un mot de passe défini
-        if (referee.password) {
-            return res.status(400).json({ message: "Un mot de passe existe déjà pour cet arbitre" });
+        if (!isPasswordValid) {
+            return res.status(401).json({ 
+                message: "Mot de passe incorrect" 
+            });
         }
 
-        // Utiliser l'UUID comme mot de passe temporaire
-        const tempPassword = referee.loginUUID;
-
-        // Mettre à jour l'arbitre
-        await db.query(
-            'UPDATE Referee SET password = ? WHERE Referee_Id = ?',
-            [await bcrypt.hash(tempPassword, 10), refereeId]
-        );
-
-        res.status(201).json({
-            message: "Compte créé avec succès",
-            username: referee.last_name,
-            tempPassword
+        // Retourner seulement l'ID de l'arbitre
+        return res.status(200).json({
+            refereeId: referee.Referee_Id,
+            refereeName: `${referee.first_name} ${referee.last_name}`,
+            message: "Connexion réussie"
         });
+
     } catch (error) {
-        console.error('Erreur lors de la création du compte:', error);
+        console.error('Erreur lors de la connexion de l\'arbitre:', error);
         res.status(500).json({
-            message: "Une erreur est survenue lors de la création du compte",
+            message: "Une erreur est survenue lors de la connexion",
             error: error.message
         });
     }

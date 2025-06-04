@@ -103,19 +103,8 @@ exports.updatePlayer = async (req, res) => {
     const { first_name, last_name, number, position } = req.body;
     const playerId = req.params.id;
     const teamId = req.params.teamId;
-    const tournamentId = req.params.tournamentId;
 
     try {
-        // Vérifier si l'équipe existe
-        const [teamExists] = await db.query(
-            'SELECT * FROM Team WHERE Team_Id = ? AND Tournament_Id = ?',
-            [teamId, tournamentId]
-        );
-
-        if (teamExists.length === 0) {
-            return res.status(404).json({ message: "Équipe non trouvée" });
-        }
-
         // Récupérer les valeurs actuelles du joueur
         const [currentPlayer] = await db.query(
             'SELECT * FROM Player WHERE Player_Id = ? AND Team_Id = ?',

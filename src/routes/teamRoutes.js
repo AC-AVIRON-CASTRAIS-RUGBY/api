@@ -3,14 +3,6 @@ const router = express.Router();
 const teamController = require('../controllers/teamController');
 const playerController = require('../controllers/playerController');
 
-console.info('🏉 Module teamRoutes initialisé');
-
-// Middleware de debug spécifique aux équipes
-router.use((req, res, next) => {
-    console.info(`🏉 Route équipe appelée: ${req.method} ${req.originalUrl}`);
-    next();
-});
-
 /**
  * @swagger
  * /api/teams/{tournamentId}:
@@ -36,10 +28,7 @@ router.use((req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:tournamentId', (req, res, next) => {
-    console.info(`📋 Récupération de toutes les équipes du tournoi ${req.params.tournamentId}`);
-    teamController.getAllTeams(req, res, next);
-});
+router.get('/:tournamentId', teamController.getAllTeams);
 
 /**
  * @swagger
@@ -72,10 +61,7 @@ router.get('/:tournamentId', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:tournamentId/teams/:id', (req, res, next) => {
-    console.info(`🎯 Récupération de l'équipe ${req.params.id} du tournoi ${req.params.tournamentId}`);
-    teamController.getTeamById(req, res, next);
-});
+router.get('/:tournamentId/teams/:id', teamController.getTeamById);
 
 /**
  * @swagger
@@ -113,10 +99,7 @@ router.get('/:tournamentId/teams/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.post('/:tournamentId/teams', (req, res, next) => {
-    console.info(`➕ Création d'une nouvelle équipe pour le tournoi ${req.params.tournamentId}`);
-    teamController.createTeam(req, res, next);
-});
+router.post('/:tournamentId/teams', teamController.createTeam);
 
 /**
  * @swagger
@@ -158,10 +141,7 @@ router.post('/:tournamentId/teams', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.put('/:tournamentId/teams/:id', (req, res, next) => {
-    console.info(`✏️ Mise à jour de l'équipe ${req.params.id} du tournoi ${req.params.tournamentId}`);
-    teamController.updateTeam(req, res, next);
-});
+router.put('/:tournamentId/teams/:id', teamController.updateTeam);
 
 /**
  * @swagger
@@ -190,10 +170,7 @@ router.put('/:tournamentId/teams/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.delete('/:tournamentId/teams/:id', (req, res, next) => {
-    console.info(`🗑️ Suppression de l'équipe ${req.params.id} du tournoi ${req.params.tournamentId}`);
-    teamController.deleteTeam(req, res, next);
-});
+router.delete('/:tournamentId/teams/:id', teamController.deleteTeam);
 
 /**
  * @swagger
@@ -226,10 +203,7 @@ router.delete('/:tournamentId/teams/:id', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:tournamentId/teams/:id/games', (req, res, next) => {
-    console.info(`🏟️ Récupération des matchs de l'équipe ${req.params.id}`);
-    teamController.getGamesByTeamId(req, res, next);
-});
+router.get('/:tournamentId/teams/:id/games', teamController.getGamesByTeamId);
 
 /**
  * @swagger
@@ -262,10 +236,7 @@ router.get('/:tournamentId/teams/:id/games', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:tournamentId/teams/:id/locker-room', (req, res, next) => {
-    console.info(`🚪 Récupération du vestiaire de l'équipe ${req.params.id}`);
-    teamController.getLockerRoomByTeamId(req, res, next);
-});
+router.get('/:tournamentId/teams/:id/locker-room', teamController.getLockerRoomByTeamId);
 
 /**
  * @swagger
@@ -298,10 +269,7 @@ router.get('/:tournamentId/teams/:id/locker-room', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.get('/:tournamentId/:teamId/players', (req, res, next) => {
-    console.info(`👥 Récupération des joueurs de l'équipe ${req.params.teamId}`);
-    playerController.getPlayersByTeamId(req, res, next);
-});
+router.get('/:tournamentId/:teamId/players', playerController.getPlayersByTeamId);
 
 /**
  * @swagger
@@ -348,11 +316,6 @@ router.get('/:tournamentId/:teamId/players', (req, res, next) => {
  *       500:
  *         description: Erreur serveur
  */
-router.post('/:tournamentId/:teamId/players', (req, res, next) => {
-    console.info(`👤 Création d'un nouveau joueur pour l'équipe ${req.params.teamId}`);
-    playerController.createPlayer(req, res, next);
-});
-
-console.info('🏉 Routes équipes configurées');
+router.post('/:tournamentId/:teamId/players', playerController.createPlayer);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const refereeController = require('../controllers/refereeController');
 
 /**
  * @swagger
@@ -43,6 +44,52 @@ const authController = require('../controllers/authController');
  *           description: Erreur serveur
  */
 router.post('/login', authController.login);
+
+/**
+ * @swagger
+ * paths:
+ *   /api/auth/referee-login:
+ *     post:
+ *       summary: Connexion spécifique pour les arbitres
+ *       tags: [Authentification]
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               required:
+ *                 - loginUUID
+ *                 - password
+ *               properties:
+ *                 loginUUID:
+ *                   type: string
+ *                   description: UUID de connexion de l'arbitre
+ *                 password:
+ *                   type: string
+ *                   format: password
+ *                   description: Mot de passe de l'arbitre
+ *       responses:
+ *         200:
+ *           description: Connexion réussie
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   refereeId:
+ *                     type: integer
+ *                     description: ID de l'arbitre
+ *                   message:
+ *                     type: string
+ *         400:
+ *           description: Paramètres manquants
+ *         401:
+ *           description: Identifiants invalides
+ *         500:
+ *           description: Erreur serveur
+ */
+router.post('/referee-login', authController.refereeLogin);
 
 /**
  * @swagger
@@ -125,15 +172,27 @@ router.post('/update-password', authController.updatePassword);
  *             schema:
  *               type: object
  *               required:
- *                 - email
+ *                 - lastName
+ *                 - firstName
+ *                 - loginUUID
  *                 - password
+ *                 - tournamentId
  *               properties:
- *                 email:
+ *                 lastName:
  *                   type: string
- *                   format: email
+ *                   format: string
+ *                 firstName:
+ *                   type: string
+ *                   format: string
+ *                 loginUUID:
+ *                   type: string
+ *                   format: string
  *                 password:
  *                   type: string
  *                   format: password
+ *                 tournamentId:
+ *                   type: integer
+ *                   format: integer
  *       responses:
  *         201:
  *           description: Compte créé avec succès
@@ -144,6 +203,6 @@ router.post('/update-password', authController.updatePassword);
  *         500:
  *           description: Erreur serveur
  */
-router.post('/referees/:refereeId/account', authController.createRefereeAccount);
+router.post('/referees/:refereeId/account', refereeController.createRefereeAccount);
 
 module.exports = router;

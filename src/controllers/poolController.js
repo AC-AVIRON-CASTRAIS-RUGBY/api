@@ -1,5 +1,15 @@
 const db = require('../config/db');
 
+// Fonction utilitaire pour le débogage
+const logStandingsCalculation = (enabled, message) => {
+    if (enabled) {
+        console.log(`[Standings Debug] ${message}`);
+    }
+};
+
+// Constante pour activer/désactiver les logs
+const DEBUG_STANDINGS = true;
+
 exports.getAllPoolsByTournament = async (req, res) => {
     const { tournamentId } = req.params;
 
@@ -209,6 +219,7 @@ exports.getPoolStandings = async (req, res) => {
             return res.status(404).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
+        // Récupérer toutes les équipes de la poule
         const [teams] = await db.query(
             'SELECT t.* FROM Team t JOIN PoolTeam pt ON t.Team_Id = pt.Team_Id WHERE pt.Pool_Id = ? AND t.Tournament_Id = ?',
             [id, tournamentId]
@@ -224,62 +235,117 @@ exports.getPoolStandings = async (req, res) => {
             [id, tournamentId]
         );
 
-        // Initialiser le tableau de classement
-        let standings = teams.map(team => ({
-            Team_Id: team.Team_Id,
-            name: team.name,
-            logo: team.logo,
-            matchesPlayed: 0,
-            wins: 0,
-            losses: 0,
-            draws: 0,
-            points: 0
-        }));
+        logStandingsCalculation(DEBUG_STANDINGS, `Poule ${id}, Tournoi ${tournamentId} - Équipes trouvées: ${teams.length}, Matchs trouvés: ${games.length}`);
 
-        // Calculer les statistiques pour chaque équipe
-        games.forEach(game => {
-            // Vérifier si le match a été joué
-            if (game.is_completed) {
-                // Trouver les équipes concernées dans le tableau de classement
-                const team1Index = standings.findIndex(team => team.Team_Id === game.Team1_Id);
-                const team2Index = standings.findIndex(team => team.Team_Id === game.Team2_Id);
-
-                if (team1Index !== -1 && team2Index !== -1) {
-                    // Incrémenter le nombre de matchs joués
-                    standings[team1Index].matchesPlayed++;
-                    standings[team2Index].matchesPlayed++;
-
-                    // Attribuer les résultats en fonction des scores
-                    if (game.Team1_Score > game.Team2_Score) {
-                        // L'équipe 1 gagne
-                        standings[team1Index].wins++;
-                        standings[team1Index].points += 3;
-                        standings[team2Index].losses++;
-                    } else if (game.Team1_Score < game.Team2_Score) {
-                        // L'équipe 2 gagne
-                        standings[team2Index].wins++;
-                        standings[team2Index].points += 3;
-                        standings[team1Index].losses++;
-                    } else {
-                        // Match nul
-                        standings[team1Index].draws++;
-                        standings[team2Index].draws++;
-                        standings[team1Index].points += 1;
-                        standings[team2Index].points += 1;
-                    }
-                }
+        // Regrouper les équipes par nom de club (ignorer la catégorie d'âge)
+        const clubsMap = new Map();
+        teams.forEach(team => {
+            // Extrait le nom du club (sans la catégorie d'âge)
+            // Par exemple: "FC Barcelona U10" => "FC Barcelona"
+            const clubName = team.name.replace(/\s+U\d+$/, '').trim();
+            
+            if (!clubsMap.has(clubName)) {
+                clubsMap.set(clubName, {
+                    name: clubName,
+                    teamIds: [team.Team_Id], // Stocker tous les IDs d'équipes du même club
+                    matchesPlayed: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    points: 0,
+                    // Conserver le logo de la première équipe du club
+                    logo: team.logo
+                });
+                logStandingsCalculation(DEBUG_STANDINGS, `Nouveau club créé: ${clubName} avec équipe ${team.Team_Id}`);
+            } else {
+                // Ajouter cet ID d'équipe au club existant
+                clubsMap.get(clubName).teamIds.push(team.Team_Id);
+                logStandingsCalculation(DEBUG_STANDINGS, `Équipe ${team.Team_Id} ajoutée au club existant: ${clubName}`);
             }
         });
 
-        // Trier le classement par points (décroissant) puis par nombre de victoires (décroissant)
-        standings.sort((a, b) => {
+        // Calculer les statistiques pour chaque club
+        games.forEach(game => {
+            if (game.is_completed) {
+                logStandingsCalculation(DEBUG_STANDINGS, `Match ${game.Game_Id}: Équipe ${game.Team1_Id} vs Équipe ${game.Team2_Id}, Score: ${game.Team1_Score}-${game.Team2_Score}`);
+                
+                // Trouver les clubs correspondant aux équipes du match
+                let team1Club = null;
+                let team2Club = null;
+
+                // Rechercher le club contenant l'ID de l'équipe 1 et 2
+                for (const [name, club] of clubsMap.entries()) {
+                    if (club.teamIds.includes(game.Team1_Id)) {
+                        team1Club = club;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Équipe 1 (ID: ${game.Team1_Id}) appartient au club: ${name}`);
+                    }
+                    if (club.teamIds.includes(game.Team2_Id)) {
+                        team2Club = club;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Équipe 2 (ID: ${game.Team2_Id}) appartient au club: ${name}`);
+                    }
+                }
+
+                // Si les deux équipes du match sont trouvées dans notre mapping
+                if (team1Club && team2Club) {
+                    // Incrémenter le nombre de matchs joués
+                    team1Club.matchesPlayed++;
+                    team2Club.matchesPlayed++;
+
+                    // Déterminer le résultat
+                    if (game.Team1_Score > game.Team2_Score) {
+                        // L'équipe 1 gagne
+                        team1Club.wins++;
+                        team1Club.points += 3;
+                        team2Club.losses++;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Club "${team1Club.name}" gagne`);
+                    } else if (game.Team1_Score < game.Team2_Score) {
+                        // L'équipe 2 gagne
+                        team2Club.wins++;
+                        team2Club.points += 3;
+                        team1Club.losses++;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Club "${team2Club.name}" gagne`);
+                    } else {
+                        // Match nul
+                        team1Club.draws++;
+                        team2Club.draws++;
+                        team1Club.points += 1;
+                        team2Club.points += 1;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Match nul`);
+                    }
+                } else {
+                    // Journaliser les clubs manquants
+                    if (!team1Club) logStandingsCalculation(DEBUG_STANDINGS, `Club pour l'équipe 1 (ID: ${game.Team1_Id}) non trouvé`);
+                    if (!team2Club) logStandingsCalculation(DEBUG_STANDINGS, `Club pour l'équipe 2 (ID: ${game.Team2_Id}) non trouvé`);
+                }
+            }
+        });        // Convertir la Map en tableau et trier
+        const clubStandings = Array.from(clubsMap.values());
+        
+        // Trier le classement par points (décroissant), puis par victoires, puis par différence de buts si implémentée
+        clubStandings.sort((a, b) => {
+            // D'abord par points
             if (b.points !== a.points) {
                 return b.points - a.points;
             }
-            return b.wins - a.wins;
+            // Ensuite par victoires
+            if (b.wins !== a.wins) {
+                return b.wins - a.wins;
+            }
+            // Ensuite par matchs joués (moins de matchs joués = meilleur classement à points égaux)
+            return a.matchesPlayed - b.matchesPlayed;
         });
 
-        res.status(200).json(standings);
+        // Ajouter le rang à chaque club
+        const rankedStandings = clubStandings.map((club, index) => ({
+            ...club,
+            rank: index + 1,
+            // Conserver les teamIds dans le résultat pour référence
+            // mais les formater en string pour faciliter l'affichage
+            teamIdsString: club.teamIds.join(','),
+            teamIds: undefined
+        }));
+
+        res.status(200).json(rankedStandings);
     } catch (error) {
         console.error('Erreur lors de la récupération du classement de la poule:', error);
         res.status(500).json({
@@ -293,79 +359,139 @@ exports.getAllPoolsStandingsByTournament = async (req, res) => {
     const { tournamentId } = req.params;
 
     try {
-        // Récupérer toutes les équipes du tournoi associées à des poules
-        const [teams] = await db.query(
-            'SELECT t.* FROM Team t JOIN PoolTeam pt ON t.Team_Id = pt.Team_Id ' +
-            'JOIN Pool p ON pt.Pool_Id = p.Pool_Id JOIN Phase ph ON p.Phase_Id = ph.Phase_Id ' +
-            'WHERE ph.Tournament_Id = ? AND t.Tournament_Id = ?',
-            [tournamentId, tournamentId]
+        // Récupérer toutes les équipes du tournoi (incluant celles qui ne sont pas dans des poules)
+        const [allTeams] = await db.query(
+            'SELECT * FROM Team WHERE Tournament_Id = ?',
+            [tournamentId]
         );
 
-        if (teams.length === 0) {
-            return res.status(404).json({ message: "Aucune équipe trouvée dans les poules de ce tournoi" });
+        if (allTeams.length === 0) {
+            return res.status(404).json({ message: "Aucune équipe trouvée dans ce tournoi" });
         }
-
-        // Initialiser le tableau de classement
-        const standings = teams.map(team => ({
-            Team_Id: team.Team_Id,
-            name: team.name,
-            logo: team.logo,
-            matchesPlayed: 0,
-            wins: 0,
-            losses: 0,
-            draws: 0,
-            points: 0
-        }));
-
+        
         // Récupérer tous les matchs du tournoi
         const [games] = await db.query('SELECT * FROM Game WHERE Tournament_Id = ?', [tournamentId]);
 
-        // Calculer les statistiques pour chaque équipe
+        logStandingsCalculation(DEBUG_STANDINGS, `Tournoi ${tournamentId} - Équipes trouvées: ${allTeams.length}, Matchs trouvés: ${games.length}`);
+
+        // Identifier les équipes qui participent effectivement à des matchs
+        const teamIdsInGames = new Set();
+        games.forEach(game => {
+            teamIdsInGames.add(game.Team1_Id);
+            teamIdsInGames.add(game.Team2_Id);
+        });
+
+        // Filtrer les équipes qui participent aux matchs
+        const teamsInGames = allTeams.filter(team => teamIdsInGames.has(team.Team_Id));
+        
+        logStandingsCalculation(DEBUG_STANDINGS, `Équipes participant aux matchs: ${teamsInGames.length}`);
+
+        // Regrouper les équipes par nom de club (ignorer la catégorie d'âge)
+        const clubsMap = new Map();
+        teamsInGames.forEach(team => {
+            // Extrait le nom du club (sans la catégorie d'âge)
+            // Par exemple: "FC Barcelona U10" => "FC Barcelona"
+            const clubName = team.name.replace(/\s+U\d+$/, '').trim();
+            
+            if (!clubsMap.has(clubName)) {
+                clubsMap.set(clubName, {
+                    name: clubName,
+                    teamIds: [team.Team_Id], // Stocker tous les IDs d'équipes du même club
+                    matchesPlayed: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    points: 0,
+                    // Conserver le logo de la première équipe du club
+                    logo: team.logo
+                });
+                logStandingsCalculation(DEBUG_STANDINGS, `Nouveau club créé: ${clubName} avec équipe ${team.Team_Id}`);
+            } else {
+                // Ajouter cet ID d'équipe au club existant
+                clubsMap.get(clubName).teamIds.push(team.Team_Id);
+                logStandingsCalculation(DEBUG_STANDINGS, `Équipe ${team.Team_Id} ajoutée au club existant: ${clubName}`);
+            }
+        });
+
+        // Calculer les statistiques pour chaque club
         games.forEach(game => {
             if (game.is_completed) {
-                // Traitement pour l'équipe 1
-                const team1Index = standings.findIndex(t => t.Team_Id === game.Team1_Id);
-                const team2Index = standings.findIndex(t => t.Team_Id === game.Team2_Id);
+                logStandingsCalculation(DEBUG_STANDINGS, `Match ${game.Game_Id}: Équipe ${game.Team1_Id} vs Équipe ${game.Team2_Id}, Score: ${game.Team1_Score}-${game.Team2_Score}`);
+                
+                // Trouver les clubs correspondant aux équipes du match
+                let team1Club = null;
+                let team2Club = null;
 
-                if (team1Index !== -1 && team2Index !== -1) {
+                // Rechercher le club contenant l'ID de l'équipe 1 et 2
+                for (const [name, club] of clubsMap.entries()) {
+                    if (club.teamIds.includes(game.Team1_Id)) {
+                        team1Club = club;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Équipe 1 (ID: ${game.Team1_Id}) appartient au club: ${name}`);
+                    }
+                    if (club.teamIds.includes(game.Team2_Id)) {
+                        team2Club = club;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Équipe 2 (ID: ${game.Team2_Id}) appartient au club: ${name}`);
+                    }
+                }
+
+                // Si les deux équipes du match sont trouvées dans notre mapping
+                if (team1Club && team2Club) {
                     // Incrémenter le nombre de matchs joués
-                    standings[team1Index].matchesPlayed++;
-                    standings[team2Index].matchesPlayed++;
+                    team1Club.matchesPlayed++;
+                    team2Club.matchesPlayed++;
 
                     // Déterminer le résultat
                     if (game.Team1_Score > game.Team2_Score) {
                         // L'équipe 1 gagne
-                        standings[team1Index].wins++;
-                        standings[team1Index].points += 3;
-                        standings[team2Index].losses++;
+                        team1Club.wins++;
+                        team1Club.points += 3;
+                        team2Club.losses++;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Club "${team1Club.name}" gagne`);
                     } else if (game.Team1_Score < game.Team2_Score) {
                         // L'équipe 2 gagne
-                        standings[team2Index].wins++;
-                        standings[team2Index].points += 3;
-                        standings[team1Index].losses++;
+                        team2Club.wins++;
+                        team2Club.points += 3;
+                        team1Club.losses++;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Club "${team2Club.name}" gagne`);
                     } else {
                         // Match nul
-                        standings[team1Index].draws++;
-                        standings[team2Index].draws++;
-                        standings[team1Index].points += 1;
-                        standings[team2Index].points += 1;
+                        team1Club.draws++;
+                        team2Club.draws++;
+                        team1Club.points += 1;
+                        team2Club.points += 1;
+                        logStandingsCalculation(DEBUG_STANDINGS, `Match nul`);
                     }
+                } else {
+                    // Journaliser les clubs manquants
+                    if (!team1Club) logStandingsCalculation(DEBUG_STANDINGS, `Club pour l'équipe 1 (ID: ${game.Team1_Id}) non trouvé`);
+                    if (!team2Club) logStandingsCalculation(DEBUG_STANDINGS, `Club pour l'équipe 2 (ID: ${game.Team2_Id}) non trouvé`);
                 }
             }
-        });
-
-        // Trier le classement
-        standings.sort((a, b) => {
+        });        // Convertir la Map en tableau et trier
+        const clubStandings = Array.from(clubsMap.values());
+        
+        // Trier le classement par points (décroissant), puis par victoires, puis par différence de buts si implémentée
+        clubStandings.sort((a, b) => {
+            // D'abord par points
             if (b.points !== a.points) {
                 return b.points - a.points;
             }
-            return b.wins - a.wins;
+            // Ensuite par victoires
+            if (b.wins !== a.wins) {
+                return b.wins - a.wins;
+            }
+            // Ensuite par matchs joués (moins de matchs joués = meilleur classement à points égaux)
+            return a.matchesPlayed - b.matchesPlayed;
         });
 
-        // Ajouter le rang à chaque équipe
-        const rankedStandings = standings.map((team, index) => ({
-            ...team,
-            rank: index + 1
+        // Ajouter le rang à chaque club
+        const rankedStandings = clubStandings.map((club, index) => ({
+            ...club,
+            rank: index + 1,
+            // Conserver les teamIds dans le résultat pour référence
+            // mais les formater en string pour faciliter l'affichage
+            teamIdsString: club.teamIds.join(','),
+            teamIds: undefined
         }));
 
         res.status(200).json(rankedStandings);
