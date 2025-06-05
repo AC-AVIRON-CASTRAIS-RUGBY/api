@@ -4,6 +4,54 @@ const tournamentController = require('../controllers/tournamentController');
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Tournament:
+ *       type: object
+ *       required:
+ *         - name
+ *         - start_date
+ *         - location
+ *       properties:
+ *         Tournament_Id:
+ *           type: integer
+ *           description: ID auto-généré du tournoi
+ *         name:
+ *           type: string
+ *           description: Nom du tournoi
+ *         description:
+ *           type: string
+ *           description: Description du tournoi
+ *         image:
+ *           type: string
+ *           description: URL de l'image du tournoi
+ *         start_date:
+ *           type: string
+ *           format: date-time
+ *           description: Date et heure de début du tournoi
+ *         location:
+ *           type: string
+ *           description: Lieu du tournoi
+ *         break_time:
+ *           type: integer
+ *           default: 5
+ *           description: Temps de pause entre les matchs (en minutes)
+ *         points_win:
+ *           type: integer
+ *           default: 3
+ *           description: Points attribués pour une victoire
+ *         points_draw:
+ *           type: integer
+ *           default: 1
+ *           description: Points attribués pour un match nul
+ *         points_loss:
+ *           type: integer
+ *           default: 0
+ *           description: Points attribués pour une défaite
+ */
+
+/**
+ * @swagger
  * /tournaments:
  *   get:
  *     summary: Récupère tous les tournois
@@ -19,12 +67,6 @@ const tournamentController = require('../controllers/tournamentController');
  *                 $ref: '#/components/schemas/Tournament'
  *       500:
  *         description: Erreur serveur
- */
-router.get('/', tournamentController.getAllTournaments);
-
-/**
- * @swagger
- * /tournaments:
  *   post:
  *     summary: Crée un nouveau tournoi
  *     tags: [Tournois]
@@ -36,8 +78,6 @@ router.get('/', tournamentController.getAllTournaments);
  *             type: object
  *             required:
  *               - name
- *               - start_date
- *               - location
  *             properties:
  *               name:
  *                 type: string
@@ -68,6 +108,7 @@ router.get('/', tournamentController.getAllTournaments);
  *       500:
  *         description: Erreur serveur
  */
+router.get('/', tournamentController.getAllTournaments);
 router.post('/', tournamentController.createTournament);
 
 /**
@@ -85,7 +126,7 @@ router.post('/', tournamentController.createTournament);
  *         description: ID du tournoi
  *     responses:
  *       200:
- *         description: Tournoi récupéré avec succès
+ *         description: Tournoi trouvé
  *         content:
  *           application/json:
  *             schema:
@@ -94,12 +135,6 @@ router.post('/', tournamentController.createTournament);
  *         description: Tournoi non trouvé
  *       500:
  *         description: Erreur serveur
- */
-router.get('/:id', tournamentController.getTournamentById);
-
-/**
- * @swagger
- * /tournaments/{id}:
  *   put:
  *     summary: Met à jour un tournoi
  *     tags: [Tournois]
@@ -141,12 +176,6 @@ router.get('/:id', tournamentController.getTournamentById);
  *         description: Tournoi non trouvé
  *       500:
  *         description: Erreur serveur
- */
-router.put('/:id', tournamentController.updateTournament);
-
-/**
- * @swagger
- * /tournaments/{id}:
  *   delete:
  *     summary: Supprime un tournoi
  *     tags: [Tournois]
@@ -165,6 +194,8 @@ router.put('/:id', tournamentController.updateTournament);
  *       500:
  *         description: Erreur serveur
  */
+router.get('/:id', tournamentController.getTournamentById);
+router.put('/:id', tournamentController.updateTournament);
 router.delete('/:id', tournamentController.deleteTournament);
 
 module.exports = router;

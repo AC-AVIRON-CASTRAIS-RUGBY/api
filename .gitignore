@@ -1,27 +1,33 @@
 # Dependencies
-/node_modules
+node_modules/
 npm-debug.log*
-
-# Production build
-/dist
-/build
+yarn-debug.log*
+yarn-error.log*
 
 # Environment variables
 .env
 .env.local
-.env.production
-.env.test
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Uploads and temporary files
-/uploads
-*.tmp
+# Logs
+logs
 *.log
 
-# Lock files (keep one, ignore the other)
-package-lock.json
-yarn.lock
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# IDE files
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# IDEs
 .vscode/
 .idea/
 *.swp
@@ -35,3 +41,6 @@ yarn.lock
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Uploads
+uploads/
