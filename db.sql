@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : jeu. 05 juin 2025 à 19:59
+-- Généré le : jeu. 05 juin 2025 à 20:11
 -- Version du serveur : 10.11.13-MariaDB-0ubuntu0.24.04.1
 -- Version de PHP : 8.4.7
 
@@ -46,8 +46,8 @@ CREATE TABLE `Category` (
   `age_min` int(11) DEFAULT NULL,
   `age_max` int(11) DEFAULT NULL,
   `description` text DEFAULT NULL,
-  `Tournament_Id` int(11) NOT NULL,
-  `game_duration` tinyint(4) DEFAULT 10
+  `game_duration` tinyint(4) NOT NULL,
+  `Tournament_Id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -175,9 +175,9 @@ CREATE TABLE `Team` (
   `Team_Id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `logo` text DEFAULT NULL,
-  `age_category` varchar(50) DEFAULT NULL,
   `Tournament_Id` int(11) NOT NULL,
-  `paid` tinyint(1) DEFAULT 0
+  `paid` tinyint(1) DEFAULT 0,
+  `Category_Id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -193,7 +193,7 @@ CREATE TABLE `Tournament` (
   `image` text DEFAULT NULL,
   `start_date` datetime DEFAULT NULL,
   `location` varchar(50) DEFAULT NULL,
-  `break_time` tinyint(4) DEFAULT 5,
+  `break_time` tinyint(4) DEFAULT NULL,
   `Referee_Id` int(11) DEFAULT NULL,
   `points_win` int(11) DEFAULT 3,
   `points_draw` int(11) DEFAULT 1,
@@ -287,7 +287,8 @@ ALTER TABLE `Referee`
 --
 ALTER TABLE `Team`
   ADD PRIMARY KEY (`Team_Id`),
-  ADD KEY `Tournament_Id` (`Tournament_Id`);
+  ADD KEY `Tournament_Id` (`Tournament_Id`),
+  ADD KEY `Category_Id` (`Category_Id`);
 
 --
 -- Index pour la table `Tournament`
@@ -441,7 +442,9 @@ ALTER TABLE `Referee`
 -- Contraintes pour la table `Team`
 --
 ALTER TABLE `Team`
-  ADD CONSTRAINT `Team_ibfk_2` FOREIGN KEY (`Tournament_Id`) REFERENCES `Tournament` (`Tournament_Id`);
+  ADD CONSTRAINT `Team_ibfk_1` FOREIGN KEY (`Category_Id`) REFERENCES `Category` (`Category_Id`),
+  ADD CONSTRAINT `Team_ibfk_2` FOREIGN KEY (`Tournament_Id`) REFERENCES `Tournament` (`Tournament_Id`),
+  ADD CONSTRAINT `fk_team_category` FOREIGN KEY (`Category_Id`) REFERENCES `Category` (`Category_Id`);
 
 --
 -- Contraintes pour la table `Tournament`
