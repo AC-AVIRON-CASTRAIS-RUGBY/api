@@ -32,12 +32,26 @@ exports.getTournamentById = async (req, res) => {
 };
 
 exports.createTournament = async (req, res) => {
-    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss } = req.body;
+    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id } = req.body;
+
+    // Validation des champs obligatoires
+    if (!name || !start_date || !location || !account_id) {
+        return res.status(400).json({ 
+            message: "Le nom, la date de début, le lieu et l'ID du compte sont requis" 
+        });
+    }
 
     try {
+        // Vérifier que le compte existe
+        const [accounts] = await db.query('SELECT * FROM Account WHERE Account_Id = ?', [account_id]);
+        
+        if (accounts.length === 0) {
+            return res.status(400).json({ message: "Compte non trouvé" });
+        }
+
         const [result] = await db.query(
-            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [name, description, start_date, location, break_time || 5, points_win || 3, points_draw || 1, points_loss || 0]
+            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [name, description, start_date, location, break_time || 5, points_win || 3, points_draw || 1, points_loss || 0, account_id]
         );
 
         res.status(201).json({
@@ -54,7 +68,7 @@ exports.createTournament = async (req, res) => {
 };
 
 exports.updateTournament = async (req, res) => {
-    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss } = req.body;
+    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id } = req.body;
     const tournamentId = req.params.id;
 
     try {
@@ -70,9 +84,18 @@ exports.updateTournament = async (req, res) => {
 
         const current = currentTournament[0];
 
+        // Si account_id est fourni, vérifier qu'il existe
+        if (account_id !== undefined) {
+            const [accounts] = await db.query('SELECT * FROM Account WHERE Account_Id = ?', [account_id]);
+            
+            if (accounts.length === 0) {
+                return res.status(400).json({ message: "Compte non trouvé" });
+            }
+        }
+
         // Construire la requête dynamiquement avec les valeurs fournies ou existantes
         const [result] = await db.query(
-            'UPDATE Tournament SET name = ?, description = ?, start_date = ?, location = ?, break_time = ?, points_win = ?, points_draw = ?, points_loss = ? WHERE Tournament_Id = ?',
+            'UPDATE Tournament SET name = ?, description = ?, start_date = ?, location = ?, break_time = ?, points_win = ?, points_draw = ?, points_loss = ?, account_id = ? WHERE Tournament_Id = ?',
             [
                 name !== undefined ? name : current.name,
                 description !== undefined ? description : current.description,
@@ -82,6 +105,7 @@ exports.updateTournament = async (req, res) => {
                 points_win !== undefined ? points_win : (current.points_win || 3),
                 points_draw !== undefined ? points_draw : (current.points_draw || 1),
                 points_loss !== undefined ? points_loss : (current.points_loss || 0),
+                account_id !== undefined ? account_id : current.account_id,
                 tournamentId
             ]
         );

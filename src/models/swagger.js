@@ -4,6 +4,11 @@
  *   schemas:
  *     Tournament:
  *       type: object
+ *       required:
+ *         - name
+ *         - start_date
+ *         - location
+ *         - account_id
  *       properties:
  *         Tournament_Id:
  *           type: integer
@@ -18,12 +23,19 @@
  *           type: string
  *         break_time:
  *           type: integer
+ *           default: 5
  *         points_win:
  *           type: integer
+ *           default: 3
  *         points_draw:
  *           type: integer
+ *           default: 1
  *         points_loss:
  *           type: integer
+ *           default: 0
+ *         account_id:
+ *           type: integer
+ *           description: ID du compte administrateur responsable du tournoi
  *
  *     Team:
  *       type: object

@@ -194,10 +194,10 @@ CREATE TABLE `Tournament` (
   `start_date` datetime DEFAULT NULL,
   `location` varchar(50) DEFAULT NULL,
   `break_time` tinyint(4) DEFAULT NULL,
-  `Referee_Id` int(11) DEFAULT NULL,
   `points_win` int(11) DEFAULT 3,
   `points_draw` int(11) DEFAULT 1,
-  `points_loss` int(11) DEFAULT 0
+  `points_loss` int(11) DEFAULT 0,
+  `account_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
@@ -295,7 +295,7 @@ ALTER TABLE `Team`
 --
 ALTER TABLE `Tournament`
   ADD PRIMARY KEY (`Tournament_Id`),
-  ADD KEY `Referee_Id` (`Referee_Id`);
+  ADD KEY `account_id` (`account_id`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -450,7 +450,20 @@ ALTER TABLE `Team`
 -- Contraintes pour la table `Tournament`
 --
 ALTER TABLE `Tournament`
-  ADD CONSTRAINT `Tournament_ibfk_1` FOREIGN KEY (`Referee_Id`) REFERENCES `Referee` (`Referee_Id`);
+  ADD CONSTRAINT `fk_tournament_account` FOREIGN KEY (`account_id`) REFERENCES `Account` (`Account_Id`);
+
+-- Migration pour nettoyer les données avant d'ajouter la contrainte
+-- Étape 1: Créer un compte admin par défaut si la table Account est vide
+INSERT IGNORE INTO `Account` (`Account_Id`, `username`, `password`, `is_admin`) 
+VALUES (1, 'admin', '$2b$10$defaulthashedpassword', 1);
+
+-- Étape 2: Mettre à jour tous les tournois existants pour utiliser le compte admin par défaut
+UPDATE `Tournament` SET `account_id` = 1 WHERE `account_id` IS NULL OR `account_id` NOT IN (SELECT `Account_Id` FROM `Account`);
+
+-- Étape 3: Ajouter la contrainte de clé étrangère
+ALTER TABLE `Tournament`
+  ADD CONSTRAINT `fk_tournament_account` FOREIGN KEY (`account_id`) REFERENCES `Account` (`Account_Id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

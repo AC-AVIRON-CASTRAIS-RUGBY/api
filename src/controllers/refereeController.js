@@ -121,7 +121,7 @@ exports.getTournamentsByRefereeId = async (req, res) => {
                     FROM
                         Tournament t
                     WHERE
-                        t.Referee_Id = ?`,
+                        t.Account_Id = ?`,
             [req.params.id]
         );
 
