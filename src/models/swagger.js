@@ -16,9 +16,31 @@
  *           format: date-time
  *         location:
  *           type: string
- *         game_duration:
- *           type: integer
  *         break_time:
+ *           type: integer
+ *         points_win:
+ *           type: integer
+ *         points_draw:
+ *           type: integer
+ *         points_loss:
+ *           type: integer
+ *
+ *     Team:
+ *       type: object
+ *       properties:
+ *         Team_Id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         logo:
+ *           type: string
+ *         age_category:
+ *           type: string
+ *         paid:
+ *           type: boolean
+ *         Tournament_Id:
+ *           type: integer
+ *         Pool_Id:
  *           type: integer
  *
  *     Game:
@@ -43,87 +65,8 @@
  *           type: integer
  *         Pool_Id:
  *           type: integer
- *         Field_Id:
- *           type: integer
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         email:
- *           type: string
- *           format: email
- *         role:
- *           type: string
- *           enum: [admin, referee, user]
- *         referee_id:
- *           type: integer
- *           nullable: true
- *         created_at:
- *           type: string
- *           format: date-time
- *
- *     LockerRoom:
- *       type: object
- *       properties:
- *         LockerRoom_Id:
- *           type: integer
- *         number:
- *           type: integer
- *         Team_Id:
- *           type: integer
- *
- *     Phase:
- *       type: object
- *       properties:
- *         Phase_Id:
- *           type: integer
- *         name:
- *           type: string
- *         type:
- *           type: string
- *           enum: [group, elimination, ranking]
- *         start_date:
- *           type: string
- *           format: date-time
- *         end_date:
- *           type: string
- *           format: date-time
  *         Tournament_Id:
  *           type: integer
- *
- *     Pool:
- *       type: object
- *       properties:
- *         Pool_Id:
- *           type: integer
- *         name:
- *           type: string
- *         Phase_Id:
- *           type: integer
- *
- *     Team:
- *       type: object
- *       properties:
- *         Team_Id:
- *           type: integer
- *         name:
- *           type: string
- *         logo:
- *           type: string
- *         age_category:
- *           type: string
- *         Tournament_Id:
- *           type: integer
- *         Pool_Id:
- *           type: integer
- *           nullable: true
  *
  *     Referee:
  *       type: object
@@ -136,18 +79,42 @@
  *           type: string
  *         loginUUID:
  *           type: string
- *         email:
- *           type: string
- *           format: email
- *         phone:
- *           type: string
- *         level:
+ *         password:
  *           type: string
  *         Tournament_Id:
  *           type: integer
- *         password:
+ *
+ *     Pool:
+ *       type: object
+ *       properties:
+ *         Pool_Id:
+ *           type: integer
+ *         name:
  *           type: string
- *           nullable: true
+ *         Phase_Id:
+ *           type: integer
+ *         Category_Id:
+ *           type: integer
+ *
+ *     Phase:
+ *       type: object
+ *       properties:
+ *         Phase_Id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         Tournament_Id:
+ *           type: integer
+ *
+ *     LockerRoom:
+ *       type: object
+ *       properties:
+ *         LockerRoom_Id:
+ *           type: integer
+ *         number:
+ *           type: integer
+ *         Team_Id:
+ *           type: integer
  *
  *     Player:
  *       type: object
@@ -162,23 +129,28 @@
  *           type: integer
  *         position:
  *           type: string
+ *         present:
+ *           type: boolean
  *         Team_Id:
  *           type: integer
- *       required:
- *         - first_name
- *         - last_name
  *
- *     Field:
+ *     Category:
  *       type: object
  *       properties:
- *         Field_Id:
+ *         Category_Id:
  *           type: integer
  *         name:
  *           type: string
- *         location:
+ *         age_min:
+ *           type: integer
+ *         age_max:
+ *           type: integer
+ *         description:
  *           type: string
- *         available:
- *           type: boolean
+ *         game_duration:
+ *           type: integer
+ *         Tournament_Id:
+ *           type: integer
  */
 
 /**
@@ -201,9 +173,375 @@
  *   - name: Joueurs
  *     description: Gestion des joueurs
  *   - name: Calendrier
- *     description: Gestion du calendrier des matchs
+ *     description: Gestion du calendrier
  *   - name: Authentification
- *     description: Authentification et gestion des comptes
+ *     description: Authentification
  *   - name: Catégories
- *     description: Gestion des catégories d'âge
+ *     description: Gestion des catégories
+ *   - name: Upload
+ *     description: Upload de fichiers
+ */
+
+/**
+ * @swagger
+ * /tournaments:
+ *   get:
+ *     summary: Récupère tous les tournois
+ *     tags: [Tournois]
+ *     responses:
+ *       200:
+ *         description: Liste des tournois
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tournament'
+ *   post:
+ *     summary: Crée un nouveau tournoi
+ *     tags: [Tournois]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Tournament'
+ *     responses:
+ *       201:
+ *         description: Tournoi créé avec succès
+ *
+ * /tournaments/{id}:
+ *   get:
+ *     summary: Récupère un tournoi par ID
+ *     tags: [Tournois]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Tournoi trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Tournament'
+ *   put:
+ *     summary: Met à jour un tournoi
+ *     tags: [Tournois]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Tournament'
+ *     responses:
+ *       200:
+ *         description: Tournoi mis à jour
+ *   delete:
+ *     summary: Supprime un tournoi
+ *     tags: [Tournois]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Tournoi supprimé
+ *
+ * /teams/tournaments/{tournamentId}:
+ *   get:
+ *     summary: Récupère toutes les équipes d'un tournoi
+ *     tags: [Équipes]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des équipes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Team'
+ *   post:
+ *     summary: Crée une nouvelle équipe
+ *     tags: [Équipes]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Team'
+ *     responses:
+ *       201:
+ *         description: Équipe créée
+ *
+ * /teams/tournaments/{tournamentId}/{id}:
+ *   get:
+ *     summary: Récupère une équipe par ID
+ *     tags: [Équipes]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Équipe trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Team'
+ *   put:
+ *     summary: Met à jour une équipe
+ *     tags: [Équipes]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Team'
+ *     responses:
+ *       200:
+ *         description: Équipe mise à jour
+ *   delete:
+ *     summary: Supprime une équipe
+ *     tags: [Équipes]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Équipe supprimée
+ *
+ * /games:
+ *   get:
+ *     summary: Récupère tous les matchs
+ *     tags: [Matchs]
+ *     responses:
+ *       200:
+ *         description: Liste des matchs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Game'
+ *   post:
+ *     summary: Crée un nouveau match
+ *     tags: [Matchs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Game'
+ *     responses:
+ *       201:
+ *         description: Match créé
+ *
+ * /games/{id}:
+ *   get:
+ *     summary: Récupère un match par ID
+ *     tags: [Matchs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Match trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Game'
+ *   put:
+ *     summary: Met à jour un match
+ *     tags: [Matchs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Game'
+ *     responses:
+ *       200:
+ *         description: Match mis à jour
+ *   delete:
+ *     summary: Supprime un match
+ *     tags: [Matchs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Match supprimé
+ *
+ * /referees:
+ *   get:
+ *     summary: Récupère tous les arbitres
+ *     tags: [Arbitres]
+ *     responses:
+ *       200:
+ *         description: Liste des arbitres
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Referee'
+ *   post:
+ *     summary: Crée un nouvel arbitre
+ *     tags: [Arbitres]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Referee'
+ *     responses:
+ *       201:
+ *         description: Arbitre créé
+ *
+ * /referees/{id}:
+ *   get:
+ *     summary: Récupère un arbitre par ID
+ *     tags: [Arbitres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Arbitre trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Referee'
+ *   put:
+ *     summary: Met à jour un arbitre
+ *     tags: [Arbitres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Referee'
+ *     responses:
+ *       200:
+ *         description: Arbitre mis à jour
+ *   delete:
+ *     summary: Supprime un arbitre
+ *     tags: [Arbitres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Arbitre supprimé
+ *
+ * /auth/login:
+ *   post:
+ *     summary: Connexion utilisateur
+ *     tags: [Authentification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ *
+ * /auth/referee-login:
+ *   post:
+ *     summary: Connexion arbitre
+ *     tags: [Authentification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               loginUUID:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
  */

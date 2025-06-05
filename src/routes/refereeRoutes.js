@@ -35,30 +35,23 @@ router.get('/', refereeController.getAllReferees);
  *           schema:
  *             type: object
  *             required:
- *               - last_name
- *               - first_name
- *               - Tournament_Id
+ *               - lastName
+ *               - firstName
+ *               - password
+ *               - tournamentId
  *             properties:
- *               last_name:
+ *               lastName:
  *                 type: string
- *               first_name:
+ *               firstName:
  *                 type: string
- *               Tournament_Id:
+ *               password:
+ *                 type: string
+ *                 format: password
+ *               tournamentId:
  *                 type: integer
  *     responses:
  *       201:
  *         description: Arbitre créé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 refereeId:
- *                   type: integer
- *                 uuid:
- *                   type: string
  *       400:
  *         description: Données invalides
  *       500:
@@ -229,25 +222,7 @@ router.get('/:id/games', refereeController.getGamesByRefereeId);
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   Tournament_Id:
- *                     type: integer
- *                   name:
- *                     type: string
- *                   description:
- *                     type: string
- *                   start_date:
- *                     type: string
- *                     format: date-time
- *                   location:
- *                     type: string
- *                   teams_count:
- *                     type: integer
- *                   pools_count:
- *                     type: integer
- *                   games_count:
- *                     type: integer
+ *                 $ref: '#/components/schemas/Tournament'
  *       500:
  *         description: Erreur serveur
  */
@@ -281,5 +256,38 @@ router.get('/:id/tournaments', refereeController.getTournamentsByRefereeId);
  *         description: Erreur serveur
  */
 router.get('/tournaments/:tournamentId', refereeController.getRefereesByTournamentIdDirect);
+
+/**
+ * @swagger
+ * /referees/login:
+ *   post:
+ *     summary: Connexion d'un arbitre
+ *     tags: [Arbitres]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - loginUUID
+ *               - password
+ *             properties:
+ *               loginUUID:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ *       400:
+ *         description: Paramètres manquants
+ *       401:
+ *         description: Identifiants invalides
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/login', refereeController.loginReferee);
 
 module.exports = router;
