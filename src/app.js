@@ -21,8 +21,8 @@ const app = express();
 
 // Configuration CORS
 const corsOptions = {
-    origin: ['*'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    origin: ['https://avironcastrais.fr', 'https://api.avironcastrais.fr', 'https://app.avironcastrais.fr', 'http://localhost:3000', 'http://localhost:8080'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true
 };
