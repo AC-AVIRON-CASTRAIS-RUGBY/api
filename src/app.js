@@ -3,6 +3,7 @@ const cors = require('cors');
 const routes = require('./routes/index');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const path = require('path');
 
 const tournamentRoutes = require('./routes/tournamentRoutes');
 const poolRoutes = require('./routes/poolRoutes');
@@ -66,9 +67,9 @@ const swaggerSettings = {
         }]
     },
     apis: [
-        './src/controllers/*.js',
-        './src/routes/*.js',
-        './src/models/swagger.js'
+        path.join(__dirname, 'controllers/*.js'),
+        path.join(__dirname, 'routes/*.js'),
+        path.join(__dirname, 'models/swagger.js')
     ]
 };
 
