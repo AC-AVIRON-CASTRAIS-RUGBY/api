@@ -72,7 +72,12 @@ const swaggerSettings = {
     ]
 };
 
-const swaggerDocs = swaggerJsDoc(swaggerSettings);
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// Ajout : génération du spec et montage de Swagger UI
+const specs = swaggerJsDoc(swaggerSettings);
+
+// UI interactive
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(specs));
+// JSON brut si besoin
+app.get('/doc.json', (req, res) => res.json(specs));
 
 module.exports = app;
