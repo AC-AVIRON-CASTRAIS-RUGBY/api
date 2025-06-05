@@ -62,7 +62,7 @@ const swaggerSettings = {
             }
         },
         servers: [{
-            url: 'https://avironcastrais.fr'
+            url: 'https://api.avironcastrais.fr'
         }]
     },
     apis: [
