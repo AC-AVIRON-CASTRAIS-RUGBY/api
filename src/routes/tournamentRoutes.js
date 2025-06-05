@@ -75,31 +75,7 @@ const tournamentController = require('../controllers/tournamentController');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               start_date:
- *                 type: string
- *                 format: date-time
- *               location:
- *                 type: string
- *               break_time:
- *                 type: integer
- *                 default: 5
- *               points_win:
- *                 type: integer
- *                 default: 3
- *               points_draw:
- *                 type: integer
- *                 default: 1
- *               points_loss:
- *                 type: integer
- *                 default: 0
+ *             $ref: '#/components/schemas/Tournament'
  *     responses:
  *       201:
  *         description: Tournoi créé avec succès
@@ -150,25 +126,7 @@ router.post('/', tournamentController.createTournament);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               start_date:
- *                 type: string
- *                 format: date-time
- *               location:
- *                 type: string
- *               break_time:
- *                 type: integer
- *               points_win:
- *                 type: integer
- *               points_draw:
- *                 type: integer
- *               points_loss:
- *                 type: integer
+ *             $ref: '#/components/schemas/Tournament'
  *     responses:
  *       200:
  *         description: Tournoi mis à jour avec succès

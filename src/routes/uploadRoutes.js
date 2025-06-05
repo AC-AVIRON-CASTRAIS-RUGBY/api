@@ -106,34 +106,6 @@ router.post('/image', upload.single('image'), (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /upload:
- *   post:
- *     summary: Upload un fichier
- *     tags: [Upload]
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Fichier uploadé avec succès
- *       400:
- *         description: Erreur dans l'upload
- *       500:
- *         description: Erreur serveur
- */
-router.post('/', (req, res) => {
-    res.status(501).json({ message: "Route d'upload non implémentée" });
-});
-
 // Gestion des erreurs multer
 router.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {

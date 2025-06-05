@@ -1,33 +1,27 @@
 {
-  "name": "api-tournament",
-  "version": "1.0.0",
-  "description": "API de gestion de tournois",
+  "name": "rugby-api",
+  "version": "0.0.0",
+  "description": "API Express pour un système de gestion de tournois de rugby",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.5.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.6.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.14.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0",
-    "uuid": "^9.0.0",
-    "multer": "^1.4.5-lts.1"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.1.10"
   },
-  "keywords": [
-    "tournament",
-    "api",
-    "sports"
-  ],
-  "author": "Votre nom",
+  "author": "RARCHAERT Alexis",
   "license": "ISC"
 }
