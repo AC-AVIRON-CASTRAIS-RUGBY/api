@@ -34,7 +34,7 @@ app.use('/uploads', express.static('uploads'));
 
 app.use('/', routes);
 
-app.use('/api/health', (req, res) => {
+app.use('/health', (req, res) => {
     return res.status(200).json({ status: 'live' });
 });
 
@@ -62,7 +62,7 @@ const swaggerSettings = {
             }
         },
         servers: [{
-            url: 'https://api.avironcastrais.fr'
+            url: 'https:/.avironcastrais.fr'
         }]
     },
     apis: [

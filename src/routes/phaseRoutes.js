@@ -77,7 +77,7 @@ router.post('/tournaments/:tournamentId', phaseController.createPhase);
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}/{id}:
+ * /phases/tournaments/{tournamentId}/{id}:
  *   get:
  *     summary: Récupère une phase par son ID
  *     tags: [Phases]
@@ -110,7 +110,7 @@ router.get('/tournaments/:tournamentId/:id', phaseController.getPhaseById);
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}/{id}:
+ * /phases/tournaments/{tournamentId}/{id}:
  *   put:
  *     summary: Met à jour une phase
  *     tags: [Phases]
@@ -149,7 +149,7 @@ router.put('/tournaments/:tournamentId/:id', phaseController.updatePhase);
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}/{id}:
+ * /phases/tournaments/{tournamentId}/{id}:
  *   delete:
  *     summary: Supprime une phase
  *     tags: [Phases]
@@ -178,7 +178,7 @@ router.delete('/tournaments/:tournamentId/:id', phaseController.deletePhase);
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}/{id}/pools:
+ * /phases/tournaments/{tournamentId}/{id}/pools:
  *   get:
  *     summary: Récupère toutes les poules d'une phase
  *     tags: [Phases]

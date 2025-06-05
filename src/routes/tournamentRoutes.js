@@ -48,10 +48,18 @@ router.get('/', tournamentController.getAllTournaments);
  *                 format: date-time
  *               location:
  *                 type: string
- *               game_duration:
- *                 type: integer
  *               break_time:
  *                 type: integer
+ *                 default: 5
+ *               points_win:
+ *                 type: integer
+ *                 default: 3
+ *               points_draw:
+ *                 type: integer
+ *                 default: 1
+ *               points_loss:
+ *                 type: integer
+ *                 default: 0
  *     responses:
  *       201:
  *         description: Tournoi créé avec succès
@@ -118,9 +126,13 @@ router.get('/:id', tournamentController.getTournamentById);
  *                 format: date-time
  *               location:
  *                 type: string
- *               game_duration:
- *                 type: integer
  *               break_time:
+ *                 type: integer
+ *               points_win:
+ *                 type: integer
+ *               points_draw:
+ *                 type: integer
+ *               points_loss:
  *                 type: integer
  *     responses:
  *       200:

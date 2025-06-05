@@ -4,7 +4,7 @@ const lockerRoomController = require('../controllers/lockerRoomController');
 
 /**
  * @swagger
- * /api/locker-rooms:
+ * /locker-rooms:
  *   get:
  *     summary: Récupère tous les vestiaires
  *     tags: [Vestiaires]
@@ -24,7 +24,7 @@ router.get('/', lockerRoomController.getAllLockerRooms);
 
 /**
  * @swagger
- * /api/locker-rooms:
+ * /locker-rooms:
  *   post:
  *     summary: Crée un nouveau vestiaire
  *     tags: [Vestiaires]
@@ -115,7 +115,7 @@ router.put('/:id', lockerRoomController.updateLockerRoom);
 
 /**
  * @swagger
- * /api/locker-rooms/{id}:
+ * /locker-rooms/{id}:
  *   delete:
  *     summary: Supprime un vestiaire
  *     tags: [Vestiaires]
@@ -138,7 +138,7 @@ router.delete('/:id', lockerRoomController.deleteLockerRoom);
 
 /**
  * @swagger
- * /api/locker-rooms/team/{teamId}:
+ * /locker-rooms/team/{teamId}:
  *   get:
  *     summary: Récupère le vestiaire d'une équipe
  *     tags: [Vestiaires]

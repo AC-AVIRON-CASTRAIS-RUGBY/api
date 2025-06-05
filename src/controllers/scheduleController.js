@@ -15,13 +15,17 @@ exports.generateSchedule = async (req, res) => {
         }
 
         const tournament = tournaments[0];
-        const gameDuration = tournament.game_duration;
-        const breakTime = tournament.break_time;
+        const breakTime = tournament.break_time || 5;
         const startDate = new Date(tournament.start_date);
 
-        // Récupérer tous les matchs du tournoi
+        // Récupérer tous les matchs du tournoi avec leurs catégories
         const [games] = await db.query(
-            'SELECT * FROM Game WHERE Tournament_Id = ? ORDER BY Pool_Id, Game_Id',
+            `SELECT g.*, p.Category_Id, c.game_duration 
+             FROM Game g 
+             JOIN Pool p ON g.Pool_Id = p.Pool_Id 
+             JOIN Category c ON p.Category_Id = c.Category_Id 
+             WHERE g.Tournament_Id = ? 
+             ORDER BY c.Category_Id, p.Pool_Id, g.Game_Id`,
             [tournamentId]
         );
 
@@ -29,6 +33,8 @@ exports.generateSchedule = async (req, res) => {
         let currentTime = new Date(startDate);
 
         for (const game of games) {
+            const gameDuration = game.game_duration || 10;
+
             // Mettre à jour l'heure de début
             await db.query(
                 'UPDATE Game SET start_time = ? WHERE Game_Id = ?',

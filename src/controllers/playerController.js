@@ -61,7 +61,7 @@ exports.getPlayerById = async (req, res) => {
 };
 
 exports.createPlayer = async (req, res) => {
-    const { first_name, last_name, number, position } = req.body;
+    const { first_name, last_name, number, position, present } = req.body;
     const teamId = req.params.teamId;
 
     // Validation des données
@@ -82,8 +82,8 @@ exports.createPlayer = async (req, res) => {
 
         // Insérer le joueur
         const [result] = await db.query(
-            'INSERT INTO Player (first_name, last_name, number, position, Team_Id) VALUES (?, ?, ?, ?, ?)',
-            [first_name, last_name, number, position, teamId]
+            'INSERT INTO Player (first_name, last_name, number, position, present, Team_Id) VALUES (?, ?, ?, ?, ?, ?)',
+            [first_name, last_name, number, position, present !== undefined ? present : true, teamId]
         );
 
         res.status(201).json({
@@ -100,7 +100,7 @@ exports.createPlayer = async (req, res) => {
 };
 
 exports.updatePlayer = async (req, res) => {
-    const { first_name, last_name, number, position } = req.body;
+    const { first_name, last_name, number, position, present } = req.body;
     const playerId = req.params.id;
     const teamId = req.params.teamId;
 
@@ -119,12 +119,13 @@ exports.updatePlayer = async (req, res) => {
 
         // Mettre à jour le joueur avec les valeurs fournies ou existantes
         const [result] = await db.query(
-            'UPDATE Player SET first_name = ?, last_name = ?, number = ?, position = ? WHERE Player_Id = ? AND Team_Id = ?',
+            'UPDATE Player SET first_name = ?, last_name = ?, number = ?, position = ?, present = ? WHERE Player_Id = ? AND Team_Id = ?',
             [
                 first_name !== undefined ? first_name : current.first_name,
                 last_name !== undefined ? last_name : current.last_name,
                 number !== undefined ? number : current.number,
                 position !== undefined ? position : current.position,
+                present !== undefined ? present : current.present,
                 playerId,
                 teamId
             ]

@@ -33,7 +33,7 @@ exports.getTeamById = async (req, res) => {
 };
 
 exports.createTeam = async (req, res) => {
-    const { name, logo, age_category } = req.body;
+    const { name, logo, age_category, paid } = req.body;
     const Tournament_Id = req.params.tournamentId;
 
     if (!name) {
@@ -42,8 +42,8 @@ exports.createTeam = async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'INSERT INTO Team (name, logo, age_category, Tournament_Id) VALUES (?, ?, ?, ?)',
-            [name, logo, age_category, Tournament_Id]
+            'INSERT INTO Team (name, logo, age_category, paid, Tournament_Id) VALUES (?, ?, ?, ?, ?)',
+            [name, logo, age_category, paid || false, Tournament_Id]
         );
 
         res.status(201).json({
@@ -60,7 +60,7 @@ exports.createTeam = async (req, res) => {
 };
 
 exports.updateTeam = async (req, res) => {
-    const { name, logo, age_category } = req.body;
+    const { name, logo, age_category, paid } = req.body;
     const teamId = req.params.id;
     const Tournament_Id = req.params.tournamentId;
 
@@ -79,11 +79,12 @@ exports.updateTeam = async (req, res) => {
 
         // Construire la requête avec les valeurs fournies ou existantes
         const [result] = await db.query(
-            'UPDATE Team SET name = ?, logo = ?, age_category = ? WHERE Team_Id = ? AND Tournament_Id = ?',
+            'UPDATE Team SET name = ?, logo = ?, age_category = ?, paid = ? WHERE Team_Id = ? AND Tournament_Id = ?',
             [
                 name !== undefined ? name : current.name,
                 logo !== undefined ? logo : current.logo,
                 age_category !== undefined ? age_category : current.age_category,
+                paid !== undefined ? paid : current.paid,
                 teamId,
                 Tournament_Id
             ]

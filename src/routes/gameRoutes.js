@@ -4,7 +4,7 @@ const gameController = require('../controllers/gameController');
 
 /**
  * @swagger
- * /api/games:
+ * /games:
  *   get:
  *     summary: Récupère tous les matchs
  *     tags: [Matchs]
@@ -24,7 +24,7 @@ router.get('/', gameController.getAllGames);
 
 /**
  * @swagger
- * /api/games:
+ * /games:
  *   post:
  *     summary: Crée un nouveau match
  *     tags: [Matchs]
@@ -146,7 +146,7 @@ router.put('/:id', gameController.updateGame);
 
 /**
  * @swagger
- * /api/games/{id}:
+ * /games/{id}:
  *   delete:
  *     summary: Supprime un match
  *     tags: [Matchs]
@@ -169,7 +169,7 @@ router.delete('/:id', gameController.deleteGame);
 
 /**
  * @swagger
- * /api/games/pool/{poolId}:
+ * /games/pool/{poolId}:
  *   get:
  *     summary: Récupère tous les matchs d'une poule
  *     tags: [Matchs]
@@ -196,7 +196,7 @@ router.get('/pool/:poolId', gameController.getGamesByPoolId);
 
 /**
  * @swagger
- * /api/games/pool/{poolId}/generate:
+ * /games/pool/{poolId}/generate:
  *   post:
  *     summary: Génère automatiquement tous les matchs d'une poule
  *     tags: [Matchs]

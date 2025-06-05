@@ -154,7 +154,7 @@ router.post('/update-password', authController.updatePassword);
 /**
  * @swagger
  * paths:
- *   /api/auth/referees/{refereeId}/account:
+ *   /auth/referees/{refereeId}/account:
  *     post:
  *       summary: Création d'un compte pour un arbitre
  *       tags: [Authentification]

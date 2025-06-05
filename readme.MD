@@ -55,4 +55,4 @@ npm run dev
 > Le seveur démarre par défaut sur `http://localhost:3000`
 
 ## 🧪 Documentation de l'API
-> Consultez l'onglet [wiki](https://github.com/AC-AVIRON-CASTRAIS-RUGBY/api/wiki) pour consulter la liste de tous les endpoints de l'API et les tests associés.
+> Consultez l'onglet [wiki](https://github.com/AC-AVIRON-CASTRAIS-RUGBY/wiki) pour consulter la liste de tous les endpoints de l'API et les tests associés.

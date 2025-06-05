@@ -5,7 +5,7 @@ const scheduleController = require('../controllers/scheduleController');
 /**
  * @swagger
  * paths:
- *   /api/schedule/tournaments/{tournamentId}/generate-schedule:
+ *   /schedule/tournaments/{tournamentId}/generate-schedule:
  *     post:
  *       summary: Génère le calendrier des matchs pour un tournoi
  *       tags: [Calendrier]
@@ -29,7 +29,7 @@ router.post('/tournaments/:tournamentId/generate-schedule', scheduleController.g
 /**
  * @swagger
  * paths:
- *   /api/schedule/tournaments/{tournamentId}:
+ *   /schedule/tournaments/{tournamentId}:
  *     get:
  *       summary: Récupère le calendrier des matchs d'un tournoi
  *       tags: [Calendrier]

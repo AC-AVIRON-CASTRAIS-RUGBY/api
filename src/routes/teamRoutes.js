@@ -240,7 +240,7 @@ router.get('/:tournamentId/teams/:id/locker-room', teamController.getLockerRoomB
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/{teamId}/players:
+ * /teams/{tournamentId}/{teamId}/players:
  *   get:
  *     summary: Récupère tous les joueurs d'une équipe
  *     tags: [Joueurs]
@@ -273,7 +273,7 @@ router.get('/:tournamentId/:teamId/players', playerController.getPlayersByTeamId
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/{teamId}/players:
+ * /teams/{tournamentId}/{teamId}/players:
  *   post:
  *     summary: Crée un nouveau joueur pour une équipe
  *     tags: [Joueurs]

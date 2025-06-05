@@ -46,7 +46,7 @@ const upload = multer({
 
 /**
  * @swagger
- * /api/upload/image:
+ * /upload/image:
  *   post:
  *     summary: Upload d'une image
  *     tags: [Upload]

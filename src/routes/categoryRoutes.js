@@ -4,7 +4,7 @@ const categoryController = require('../controllers/categoryController');
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}:
+ * /categories/tournaments/{tournamentId}:
  *   get:
  *     summary: Récupère toutes les catégories d'un tournoi
  *     tags: [Catégories]
@@ -72,6 +72,9 @@ router.get('/tournaments/:tournamentId', categoryController.getAllCategoriesByTo
  *                 type: integer
  *               description:
  *                 type: string
+ *               game_duration:
+ *                 type: integer
+ *                 default: 10
  *     responses:
  *       201:
  *         description: Catégorie créée avec succès
@@ -145,6 +148,8 @@ router.get('/tournaments/:tournamentId/:id', categoryController.getCategoryById)
  *                 type: integer
  *               description:
  *                 type: string
+ *               game_duration:
+ *                 type: integer
  *     responses:
  *       200:
  *         description: Catégorie mise à jour avec succès
@@ -157,7 +162,7 @@ router.put('/tournaments/:tournamentId/:id', categoryController.updateCategory);
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}/{id}:
+ * /categories/tournaments/{tournamentId}/{id}:
  *   delete:
  *     summary: Supprime une catégorie
  *     tags: [Catégories]
@@ -186,7 +191,7 @@ router.delete('/tournaments/:tournamentId/:id', categoryController.deleteCategor
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}/{id}/pools:
+ * /categories/tournaments/{tournamentId}/{id}/pools:
  *   get:
  *     summary: Récupère toutes les poules d'une catégorie
  *     tags: [Catégories]
@@ -227,5 +232,59 @@ router.delete('/tournaments/:tournamentId/:id', categoryController.deleteCategor
  *         description: Erreur serveur
  */
 router.get('/tournaments/:tournamentId/:id/pools', categoryController.getPoolsByCategory);
+
+/**
+ * @swagger
+ * /categories/tournaments/{tournamentId}/{id}/standings:
+ *   get:
+ *     summary: Récupère le classement d'une catégorie
+ *     tags: [Catégories]
+ *     parameters:
+ *       - in: path
+ *         name: tournamentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID du tournoi
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la catégorie
+ *     responses:
+ *       200:
+ *         description: Classement récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   Team_Id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ *                   logo:
+ *                     type: string
+ *                   matchesPlayed:
+ *                     type: integer
+ *                   wins:
+ *                     type: integer
+ *                   losses:
+ *                     type: integer
+ *                   draws:
+ *                     type: integer
+ *                   points:
+ *                     type: integer
+ *                   rank:
+ *                     type: integer
+ *       404:
+ *         description: Catégorie non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/tournaments/:tournamentId/:id/standings', categoryController.getCategoryStandings);
 
 module.exports = router;
