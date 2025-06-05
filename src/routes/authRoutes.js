@@ -6,7 +6,7 @@ const refereeController = require('../controllers/refereeController');
 /**
  * @swagger
  * paths:
- *   /api/auth/login:
+ *   /auth/login:
  *     post:
  *       summary: Connexion d'un utilisateur
  *       tags: [Authentification]
@@ -48,7 +48,7 @@ router.post('/login', authController.login);
 /**
  * @swagger
  * paths:
- *   /api/auth/referee-login:
+ *   /auth/referee-login:
  *     post:
  *       summary: Connexion spécifique pour les arbitres
  *       tags: [Authentification]
@@ -94,7 +94,7 @@ router.post('/referee-login', authController.refereeLogin);
 /**
  * @swagger
  * paths:
- *   /api/auth/verify/{uuid}:
+ *   /auth/verify/{uuid}:
  *     get:
  *       summary: Vérification d'un token d'authentification
  *       tags: [Authentification]
@@ -118,7 +118,7 @@ router.get('/verify/:uuid', authController.verifyAuth);
 /**
  * @swagger
  * paths:
- *   /api/auth/update-password:
+ *   /auth/update-password:
  *     post:
  *       summary: Mise à jour du mot de passe
  *       tags: [Authentification]

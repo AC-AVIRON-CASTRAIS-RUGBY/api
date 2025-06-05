@@ -38,17 +38,18 @@ app.use('/api/health', (req, res) => {
     return res.status(200).json({ status: 'live' });
 });
 
-app.use('/api/tournaments', tournamentRoutes);
-app.use('/api/pools', poolRoutes);
-app.use('/api/teams', teamRoutes);
-app.use('/api/games', gameRoutes);
-app.use('/api/phases', phaseRoutes);
-app.use('/api/locker-rooms', lockerRoomRoutes);
-app.use('/api/referees', refereeRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/schedule', scheduleRoutes);
-app.use('/api/upload', uploadRoutes);
-app.use('/api/categories', categoryRoutes);
+// Routes
+app.use('/tournaments', tournamentRoutes);
+app.use('/teams', teamRoutes);
+app.use('/games', gameRoutes);
+app.use('/referees', refereeRoutes);
+app.use('/pools', poolRoutes);
+app.use('/phases', phaseRoutes);
+app.use('/locker-rooms', lockerRoomRoutes);
+app.use('/players', playerRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/schedule', scheduleRoutes);
+app.use('/auth', authRoutes);
 
 const swaggerSettings = {
     swaggerDefinition: {
@@ -62,7 +63,7 @@ const swaggerSettings = {
             }
         },
         servers: [{
-            url: 'http://localhost:3000'
+            url: 'https://api.avironcastrais.fr'
         }]
     },
     apis: [

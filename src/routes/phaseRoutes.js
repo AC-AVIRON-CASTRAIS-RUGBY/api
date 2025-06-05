@@ -6,7 +6,7 @@ const phaseController = require('../controllers/phaseController');
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}:
+ * /phases/tournaments/{tournamentId}:
  *   get:
  *     summary: Récupère toutes les phases d'un tournoi
  *     tags: [Phases]
@@ -33,7 +33,7 @@ router.get('/tournaments/:tournamentId', phaseController.getPhasesByTournamentId
 
 /**
  * @swagger
- * /api/phases/tournaments/{tournamentId}:
+ * /phases/tournaments/{tournamentId}:
  *   post:
  *     summary: Crée une nouvelle phase
  *     tags: [Phases]

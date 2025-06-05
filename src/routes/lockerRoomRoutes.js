@@ -54,7 +54,7 @@ router.post('/', lockerRoomController.createLockerRoom);
 
 /**
  * @swagger
- * /api/locker-rooms/{id}:
+ * /locker-rooms/{id}:
  *   get:
  *     summary: Récupère un vestiaire par son ID
  *     tags: [Vestiaires]
@@ -81,7 +81,7 @@ router.get('/:id', lockerRoomController.getLockerRoomById);
 
 /**
  * @swagger
- * /api/locker-rooms/{id}:
+ * /locker-rooms/{id}:
  *   put:
  *     summary: Met à jour un vestiaire
  *     tags: [Vestiaires]

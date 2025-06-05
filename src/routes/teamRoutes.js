@@ -5,7 +5,7 @@ const playerController = require('../controllers/playerController');
 
 /**
  * @swagger
- * /api/teams/{tournamentId}:
+ * /teams/{tournamentId}:
  *   get:
  *     summary: Récupère toutes les équipes d'un tournoi
  *     tags: [Équipes]
@@ -32,7 +32,7 @@ router.get('/:tournamentId', teamController.getAllTeams);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams/{id}:
+ * /teams/{tournamentId}/teams/{id}:
  *   get:
  *     summary: Récupère une équipe par son ID
  *     tags: [Équipes]
@@ -65,7 +65,7 @@ router.get('/:tournamentId/teams/:id', teamController.getTeamById);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams:
+ * /teams/{tournamentId}/teams:
  *   post:
  *     summary: Crée une nouvelle équipe
  *     tags: [Équipes]
@@ -103,7 +103,7 @@ router.post('/:tournamentId/teams', teamController.createTeam);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams/{id}:
+ * /teams/{tournamentId}/teams/{id}:
  *   put:
  *     summary: Met à jour une équipe
  *     tags: [Équipes]
@@ -145,7 +145,7 @@ router.put('/:tournamentId/teams/:id', teamController.updateTeam);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams/{id}:
+ * /teams/{tournamentId}/teams/{id}:
  *   delete:
  *     summary: Supprime une équipe
  *     tags: [Équipes]
@@ -174,7 +174,7 @@ router.delete('/:tournamentId/teams/:id', teamController.deleteTeam);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams/{id}/games:
+ * /teams/{tournamentId}/teams/{id}/games:
  *   get:
  *     summary: Récupère tous les matchs d'une équipe
  *     tags: [Équipes]
@@ -207,7 +207,7 @@ router.get('/:tournamentId/teams/:id/games', teamController.getGamesByTeamId);
 
 /**
  * @swagger
- * /api/teams/{tournamentId}/teams/{id}/locker-room:
+ * /teams/{tournamentId}/teams/{id}/locker-room:
  *   get:
  *     summary: Récupère le vestiaire d'une équipe
  *     tags: [Équipes]

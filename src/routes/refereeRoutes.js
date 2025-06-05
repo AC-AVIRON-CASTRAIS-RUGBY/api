@@ -4,7 +4,7 @@ const refereeController = require('../controllers/refereeController');
 
 /**
  * @swagger
- * /api/referees:
+ * /referees:
  *   get:
  *     summary: Récupère tous les arbitres
  *     tags: [Arbitres]
@@ -24,7 +24,7 @@ router.get('/', refereeController.getAllReferees);
 
 /**
  * @swagger
- * /api/referees:
+ * /referees:
  *   post:
  *     summary: Crée un nouvel arbitre
  *     tags: [Arbitres]
@@ -68,7 +68,7 @@ router.post('/', refereeController.createReferee);
 
 /**
  * @swagger
- * /api/referees/{id}:
+ * /referees/{id}:
  *   get:
  *     summary: Récupère un arbitre par son ID
  *     tags: [Arbitres]
@@ -95,7 +95,7 @@ router.get('/:id', refereeController.getRefereeById);
 
 /**
  * @swagger
- * /api/referees/{id}:
+ * /referees/{id}:
  *   put:
  *     summary: Met à jour un arbitre
  *     tags: [Arbitres]
@@ -133,7 +133,7 @@ router.put('/:id', refereeController.updateReferee);
 
 /**
  * @swagger
- * /api/referees/{id}:
+ * /referees/{id}:
  *   delete:
  *     summary: Supprime un arbitre
  *     tags: [Arbitres]
@@ -156,7 +156,7 @@ router.delete('/:id', refereeController.deleteReferee);
 
 /**
  * @swagger
- * /api/referees/uuid/{uuid}:
+ * /referees/uuid/{uuid}:
  *   get:
  *     summary: Récupère un arbitre par son UUID
  *     tags: [Arbitres]
@@ -183,7 +183,7 @@ router.get('/uuid/:uuid', refereeController.getRefereeByUUID);
 
 /**
  * @swagger
- * /api/referees/{id}/games:
+ * /referees/{id}/games:
  *   get:
  *     summary: Récupère tous les matchs d'un arbitre
  *     tags: [Arbitres]
@@ -210,7 +210,7 @@ router.get('/:id/games', refereeController.getGamesByRefereeId);
 
 /**
  * @swagger
- * /api/referees/{id}/tournaments:
+ * /referees/{id}/tournaments:
  *   get:
  *     summary: Récupère tous les tournois d'un arbitre
  *     tags: [Arbitres]
@@ -255,7 +255,7 @@ router.get('/:id/tournaments', refereeController.getTournamentsByRefereeId);
 
 /**
  * @swagger
- * /api/referees/tournaments/{tournamentId}:
+ * /referees/tournaments/{tournamentId}:
  *   get:
  *     summary: Récupère tous les arbitres d'un tournoi
  *     tags: [Arbitres]

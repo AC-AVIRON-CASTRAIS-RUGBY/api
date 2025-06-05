@@ -4,7 +4,7 @@ const tournamentController = require('../controllers/tournamentController');
 
 /**
  * @swagger
- * /api/tournaments:
+ * /tournaments:
  *   get:
  *     summary: Récupère tous les tournois
  *     tags: [Tournois]
@@ -24,7 +24,7 @@ router.get('/', tournamentController.getAllTournaments);
 
 /**
  * @swagger
- * /api/tournaments:
+ * /tournaments:
  *   post:
  *     summary: Crée un nouveau tournoi
  *     tags: [Tournois]
@@ -64,7 +64,7 @@ router.post('/', tournamentController.createTournament);
 
 /**
  * @swagger
- * /api/tournaments/{id}:
+ * /tournaments/{id}:
  *   get:
  *     summary: Récupère un tournoi par son ID
  *     tags: [Tournois]
@@ -91,7 +91,7 @@ router.get('/:id', tournamentController.getTournamentById);
 
 /**
  * @swagger
- * /api/tournaments/{id}:
+ * /tournaments/{id}:
  *   put:
  *     summary: Met à jour un tournoi
  *     tags: [Tournois]
@@ -134,7 +134,7 @@ router.put('/:id', tournamentController.updateTournament);
 
 /**
  * @swagger
- * /api/tournaments/{id}:
+ * /tournaments/{id}:
  *   delete:
  *     summary: Supprime un tournoi
  *     tags: [Tournois]

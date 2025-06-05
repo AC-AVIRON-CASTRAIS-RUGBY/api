@@ -70,7 +70,7 @@ router.post('/', gameController.createGame);
 
 /**
  * @swagger
- * /api/games/{id}:
+ * /games/{id}:
  *   get:
  *     summary: Récupère un match par son ID
  *     tags: [Matchs]
@@ -97,7 +97,7 @@ router.get('/:id', gameController.getGameById);
 
 /**
  * @swagger
- * /api/games/{id}:
+ * /games/{id}:
  *   put:
  *     summary: Met à jour un match
  *     tags: [Matchs]

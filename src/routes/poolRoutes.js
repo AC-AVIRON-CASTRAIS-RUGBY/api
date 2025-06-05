@@ -4,7 +4,7 @@ const poolController = require('../controllers/poolController');
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}:
+ * /pools/tournaments/{tournamentId}:
  *   get:
  *     summary: Récupère toutes les poules d'un tournoi
  *     tags: [Poules]
@@ -31,7 +31,7 @@ router.get('/tournaments/:tournamentId', poolController.getAllPoolsByTournament)
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}:
+ * /pools/tournaments/{tournamentId}:
  *   post:
  *     summary: Crée une nouvelle poule
  *     tags: [Poules]
@@ -68,7 +68,7 @@ router.post('/tournaments/:tournamentId', poolController.createPool);
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}:
+ * /pools/tournaments/{tournamentId}/{id}:
  *   get:
  *     summary: Récupère une poule par son ID
  *     tags: [Poules]
@@ -101,7 +101,7 @@ router.get('/tournaments/:tournamentId/:id', poolController.getPoolById);
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}:
+ * /pools/tournaments/{tournamentId}/{id}:
  *   put:
  *     summary: Met à jour une poule
  *     tags: [Poules]
@@ -141,7 +141,7 @@ router.put('/tournaments/:tournamentId/:id', poolController.updatePool);
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}:
+ * /pools/tournaments/{tournamentId}/{id}:
  *   delete:
  *     summary: Supprime une poule
  *     tags: [Poules]
@@ -170,7 +170,7 @@ router.delete('/tournaments/:tournamentId/:id', poolController.deletePool);
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}/standings:
+ * /pools/tournaments/{tournamentId}/{id}/standings:
  *   get:
  *     summary: Récupère le classement d'une poule
  *     tags: [Poules]
@@ -222,7 +222,7 @@ router.get('/tournaments/:tournamentId/:id/standings', poolController.getPoolSta
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/standings/all:
+ * /pools/tournaments/{tournamentId}/standings/all:
  *   get:
  *     summary: Récupère le classement général de toutes les poules d'un tournoi
  *     tags: [Poules]
@@ -270,7 +270,7 @@ router.get('/tournaments/:tournamentId/standings/all', poolController.getAllPool
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}/teams:
+ * /pools/tournaments/{tournamentId}/{id}/teams:
  *   get:
  *     summary: Récupère toutes les équipes d'une poule
  *     tags: [Poules]
@@ -303,7 +303,7 @@ router.get('/tournaments/:tournamentId/:id/teams', poolController.getTeamsByPool
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}/teams:
+ * /pools/tournaments/{tournamentId}/{id}/teams:
  *   post:
  *     summary: Ajoute une équipe à une poule
  *     tags: [Poules]
@@ -345,7 +345,7 @@ router.post('/tournaments/:tournamentId/:id/teams', poolController.addTeamToPool
 
 /**
  * @swagger
- * /api/pools/tournaments/{tournamentId}/{id}/teams/{teamId}:
+ * /pools/tournaments/{tournamentId}/{id}/teams/{teamId}:
  *   delete:
  *     summary: Retire une équipe d'une poule
  *     tags: [Poules]

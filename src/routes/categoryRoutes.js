@@ -44,7 +44,7 @@ router.get('/tournaments/:tournamentId', categoryController.getAllCategoriesByTo
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}:
+ * /categories/tournaments/{tournamentId}:
  *   post:
  *     summary: Crée une nouvelle catégorie
  *     tags: [Catégories]
@@ -84,7 +84,7 @@ router.post('/tournaments/:tournamentId', categoryController.createCategory);
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}/{id}:
+ * /categories/tournaments/{tournamentId}/{id}:
  *   get:
  *     summary: Récupère une catégorie par son ID
  *     tags: [Catégories]
@@ -113,7 +113,7 @@ router.get('/tournaments/:tournamentId/:id', categoryController.getCategoryById)
 
 /**
  * @swagger
- * /api/categories/tournaments/{tournamentId}/{id}:
+ * /categories/tournaments/{tournamentId}/{id}:
  *   put:
  *     summary: Met à jour une catégorie
  *     tags: [Catégories]
