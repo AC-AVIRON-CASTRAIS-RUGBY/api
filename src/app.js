@@ -46,7 +46,6 @@ app.use('/referees', refereeRoutes);
 app.use('/pools', poolRoutes);
 app.use('/phases', phaseRoutes);
 app.use('/locker-rooms', lockerRoomRoutes);
-app.use('/players', playerRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/schedule', scheduleRoutes);
 app.use('/auth', authRoutes);
