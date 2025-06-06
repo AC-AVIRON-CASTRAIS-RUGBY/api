@@ -50,7 +50,7 @@ exports.createTournament = async (req, res) => {
         }
 
         const [result] = await db.query(
-            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [name, description, start_date, location, break_time || 5, points_win || 3, points_draw || 1, points_loss || 0, account_id, image || null]
         );
 
@@ -68,7 +68,7 @@ exports.createTournament = async (req, res) => {
 };
 
 exports.updateTournament = async (req, res) => {
-    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id } = req.body;
+    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id, image } = req.body;
     const tournamentId = req.params.id;
 
     try {
@@ -95,7 +95,7 @@ exports.updateTournament = async (req, res) => {
 
         // Construire la requête dynamiquement avec les valeurs fournies ou existantes
         const [result] = await db.query(
-            'UPDATE Tournament SET name = ?, description = ?, start_date = ?, location = ?, break_time = ?, points_win = ?, points_draw = ?, points_loss = ?, account_id = ? WHERE Tournament_Id = ?',
+            'UPDATE Tournament SET name = ?, description = ?, start_date = ?, location = ?, break_time = ?, points_win = ?, points_draw = ?, points_loss = ?, account_id = ?, image = ? WHERE Tournament_Id = ?',
             [
                 name !== undefined ? name : current.name,
                 description !== undefined ? description : current.description,
@@ -106,6 +106,7 @@ exports.updateTournament = async (req, res) => {
                 points_draw !== undefined ? points_draw : (current.points_draw || 1),
                 points_loss !== undefined ? points_loss : (current.points_loss || 0),
                 account_id !== undefined ? account_id : current.account_id,
+                image !== undefined ? image : current.image,
                 tournamentId
             ]
         );
