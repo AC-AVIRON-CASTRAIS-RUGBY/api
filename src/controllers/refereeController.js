@@ -95,10 +95,35 @@ exports.deleteReferee = async (req, res) => {
 
 exports.getGamesByRefereeId = async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Game WHERE Referee_Id = ?', [req.params.id]);
+        // Vérifier que l'arbitre existe
+        const [refereeExists] = await db.query('SELECT * FROM Referee WHERE Referee_Id = ?', [req.params.id]);
+        
+        if (refereeExists.length === 0) {
+            return res.status(404).json({ message: "Arbitre non trouvé" });
+        }
+
+        // Récupérer tous les matchs de l'arbitre avec les informations des équipes et poules
+        const [rows] = await db.query(`
+            SELECT g.*, 
+                   t1.name AS team1_name, 
+                   t2.name AS team2_name,
+                   p.name AS pool_name,
+                   ph.name AS phase_name,
+                   c.name AS category_name
+            FROM Game g 
+            JOIN Team t1 ON g.Team1_Id = t1.Team_Id
+            JOIN Team t2 ON g.Team2_Id = t2.Team_Id
+            JOIN Pool p ON g.Pool_Id = p.Pool_Id
+            JOIN Phase ph ON p.Phase_Id = ph.Phase_Id
+            LEFT JOIN Category c ON p.Category_Id = c.Category_Id
+            WHERE g.Referee_Id = ? 
+            ORDER BY g.start_time ASC`, 
+            [req.params.id]
+        );
+
         res.status(200).json(rows);
     } catch (error) {
-        console.error('Erreur lors de la récupération des matchs:', error);
+        console.error('Erreur lors de la récupération des matchs de l\'arbitre:', error);
         res.status(500).json({
             message: "Une erreur est survenue lors de la récupération des matchs",
             error: error.message

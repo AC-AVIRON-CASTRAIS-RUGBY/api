@@ -657,6 +657,89 @@
  *       500:
  *         description: Erreur serveur
  *
+ * /referees/{id}/games:
+ *   get:
+ *     summary: Récupère tous les matchs assignés à un arbitre
+ *     tags: [Arbitres]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de l'arbitre
+ *     responses:
+ *       200:
+ *         description: Liste des matchs de l'arbitre récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   Game_Id:
+ *                     type: integer
+ *                   start_time:
+ *                     type: string
+ *                     format: date-time
+ *                   Team1_Id:
+ *                     type: integer
+ *                   Team2_Id:
+ *                     type: integer
+ *                   Team1_Score:
+ *                     type: integer
+ *                   Team2_Score:
+ *                     type: integer
+ *                   is_completed:
+ *                     type: boolean
+ *                   Pool_Id:
+ *                     type: integer
+ *                   Tournament_Id:
+ *                     type: integer
+ *                   team1_name:
+ *                     type: string
+ *                     description: Nom de l'équipe 1
+ *                   team2_name:
+ *                     type: string
+ *                     description: Nom de l'équipe 2
+ *                   pool_name:
+ *                     type: string
+ *                     description: Nom de la poule
+ *                   phase_name:
+ *                     type: string
+ *                     description: Nom de la phase
+ *                   category_name:
+ *                     type: string
+ *                     description: Nom de la catégorie
+ *       404:
+ *         description: Arbitre non trouvé
+ *       500:
+ *         description: Erreur serveur
+ *
+ * /referees/uuid/{uuid}:
+ *   get:
+ *     summary: Récupère un arbitre par son UUID
+ *     tags: [Arbitres]
+ *     parameters:
+ *       - in: path
+ *         name: uuid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UUID de l'arbitre
+ *     responses:
+ *       200:
+ *         description: Arbitre trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Referee'
+ *       404:
+ *         description: Arbitre non trouvé
+ *       500:
+ *         description: Erreur serveur
+ *
  * /auth/login:
  *   post:
  *     summary: Connexion utilisateur
