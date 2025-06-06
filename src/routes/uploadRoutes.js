@@ -106,62 +106,6 @@ router.post('/image', upload.single('image'), (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /upload/team-logo:
- *   post:
- *     summary: Upload du logo d'une équipe
- *     tags: [Upload]
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               logo:
- *                 type: string
- *                 format: binary
- *                 description: Fichier image du logo
- *     responses:
- *       200:
- *         description: Logo uploadé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 filename:
- *                   type: string
- *                 url:
- *                   type: string
- *       400:
- *         description: Aucun fichier uploadé ou format invalide
- *       500:
- *         description: Erreur serveur
- */
-router.post('/team-logo', upload.single('logo'), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'Aucun fichier uploadé' });
-        }
-
-        res.status(200).json({
-            message: 'Logo uploadé avec succès',
-            filename: req.file.filename,
-            url: `/uploads/${req.file.filename}`
-        });
-    } catch (error) {
-        console.error('Erreur lors de l\'upload:', error);
-        res.status(500).json({
-            message: 'Erreur lors de l\'upload du fichier',
-            error: error.message
-        });
-    }
-});
-
 // Gestion des erreurs multer
 router.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
