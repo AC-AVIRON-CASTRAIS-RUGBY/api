@@ -248,27 +248,91 @@
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID du tournoi
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Tournament'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nom du tournoi
+ *               description:
+ *                 type: string
+ *                 description: Description du tournoi
+ *               start_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date de début du tournoi
+ *               location:
+ *                 type: string
+ *                 description: Lieu du tournoi
+ *               break_time:
+ *                 type: integer
+ *                 description: Temps de pause en minutes
+ *                 default: 5
+ *               points_win:
+ *                 type: integer
+ *                 description: Points pour une victoire
+ *                 default: 3
+ *               points_draw:
+ *                 type: integer
+ *                 description: Points pour un match nul
+ *                 default: 1
+ *               points_loss:
+ *                 type: integer
+ *                 description: Points pour une défaite
+ *                 default: 0
+ *               account_id:
+ *                 type: integer
+ *                 description: ID du compte administrateur
+ *               image:
+ *                 type: string
+ *                 description: URL de l'image du tournoi
  *     responses:
  *       200:
- *         description: Tournoi mis à jour
- *   delete:
- *     summary: Supprime un tournoi
- *     tags: [Tournois]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Tournoi supprimé
+ *         description: Tournoi mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Tournoi mis à jour avec succès"
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Compte non trouvé"
+ *       404:
+ *         description: Tournoi non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Tournoi non trouvé"
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  *
  * /teams/tournaments/{tournamentId}:
  *   get:
@@ -339,37 +403,39 @@
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID du tournoi
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID de l'équipe
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Team'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nom de l'équipe
+ *               logo:
+ *                 type: string
+ *                 description: URL du logo de l'équipe
+ *               Category_Id:
+ *                 type: integer
+ *                 description: ID de la catégorie
+ *               paid:
+ *                 type: boolean
+ *                 description: Statut de paiement
  *     responses:
  *       200:
- *         description: Équipe mise à jour
- *   delete:
- *     summary: Supprime une équipe
- *     tags: [Équipes]
- *     parameters:
- *       - in: path
- *         name: tournamentId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Équipe supprimée
+ *         description: Équipe mise à jour avec succès
+ *       404:
+ *         description: Équipe non trouvée
+ *       500:
+ *         description: Erreur serveur
  *
  * /games:
  *   get:
@@ -423,27 +489,49 @@
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID du match
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Game'
+ *             type: object
+ *             properties:
+ *               start_time:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Heure de début du match
+ *               Team1_Id:
+ *                 type: integer
+ *                 description: ID de l'équipe 1
+ *               Team2_Id:
+ *                 type: integer
+ *                 description: ID de l'équipe 2
+ *               Team1_Score:
+ *                 type: integer
+ *                 description: Score de l'équipe 1
+ *               Team2_Score:
+ *                 type: integer
+ *                 description: Score de l'équipe 2
+ *               is_completed:
+ *                 type: boolean
+ *                 description: Match terminé ou non
+ *               Referee_Id:
+ *                 type: integer
+ *                 description: ID de l'arbitre
+ *               Pool_Id:
+ *                 type: integer
+ *                 description: ID de la poule
+ *               Field_Id:
+ *                 type: integer
+ *                 description: ID du terrain
  *     responses:
  *       200:
- *         description: Match mis à jour
- *   delete:
- *     summary: Supprime un match
- *     tags: [Matchs]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Match supprimé
+ *         description: Match mis à jour avec succès
+ *       404:
+ *         description: Match non trouvé
+ *       500:
+ *         description: Erreur serveur
  *
  * /referees:
  *   get:
@@ -497,27 +585,33 @@
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID de l'arbitre
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Referee'
+ *             type: object
+ *             properties:
+ *               last_name:
+ *                 type: string
+ *                 description: Nom de famille de l'arbitre
+ *               first_name:
+ *                 type: string
+ *                 description: Prénom de l'arbitre
+ *               loginUUID:
+ *                 type: string
+ *                 description: UUID de connexion
+ *               Tournament_Id:
+ *                 type: integer
+ *                 description: ID du tournoi associé
  *     responses:
  *       200:
- *         description: Arbitre mis à jour
- *   delete:
- *     summary: Supprime un arbitre
- *     tags: [Arbitres]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Arbitre supprimé
+ *         description: Arbitre mis à jour avec succès
+ *       404:
+ *         description: Arbitre non trouvé
+ *       500:
+ *         description: Erreur serveur
  *
  * /auth/login:
  *   post:

@@ -132,19 +132,52 @@ router.get('/tournaments/:tournamentId/:id', teamController.getTeamById);
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Nom de l'équipe
+ *                 example: "FC Barcelona U10"
  *               logo:
  *                 type: string
- *               age_category:
- *                 type: string
+ *                 description: URL du logo de l'équipe
+ *                 example: "https://example.com/logo.png"
+ *               Category_Id:
+ *                 type: integer
+ *                 description: ID de la catégorie d'âge
+ *                 example: 1
  *               paid:
  *                 type: boolean
+ *                 description: Statut de paiement de l'équipe
+ *                 example: true
  *     responses:
  *       200:
  *         description: Équipe mise à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Équipe mise à jour avec succès"
  *       404:
  *         description: Équipe non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Équipe non trouvée"
  *       500:
  *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.put('/tournaments/:tournamentId/:id', teamController.updateTeam);
 
