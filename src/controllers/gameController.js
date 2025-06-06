@@ -32,7 +32,7 @@ exports.getGameById = async (req, res) => {
 };
 
 exports.createGame = async (req, res) => {
-    const { start_time, wins, losses, draws, Team1_Id, Team2_Id, Referee_Id, Pool_Id } = req.body;
+    const { start_time, wins, losses, draws, Team1_Id, Team2_Id, Referee_Id, Pool_Id, Tournament_Id } = req.body;
 
     if (!Team1_Id || !Team2_Id || !Referee_Id || !Pool_Id) {
         return res.status(400).json({ message: "Les équipes, l'arbitre et la poule sont requis" });
@@ -40,8 +40,8 @@ exports.createGame = async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'INSERT INTO Game (start_time, wins, losses, draws, Team1_Id, Team2_Id, Referee_Id, Pool_Id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [start_time, wins || 0, losses || 0, draws || 0, Team1_Id, Team2_Id, Referee_Id, Pool_Id]
+            'INSERT INTO Game (start_time, wins, losses, draws, Team1_Id, Team2_Id, Referee_Id, Pool_Id, Tournament_Id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [start_time, wins || 0, losses || 0, draws || 0, Team1_Id, Team2_Id, Referee_Id, Pool_Id, Tournament_Id]
         );
 
         res.status(201).json({
