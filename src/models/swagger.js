@@ -46,8 +46,6 @@
  *           type: string
  *         logo:
  *           type: string
- *         age_category:
- *           type: string
  *         paid:
  *           type: boolean
  *         Tournament_Id:

@@ -56,8 +56,6 @@ router.get('/tournaments/:tournamentId', teamController.getAllTeams);
  *                 type: string
  *               logo:
  *                 type: string
- *               age_category:
- *                 type: string
  *               paid:
  *                 type: boolean
  *                 default: false

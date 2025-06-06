@@ -166,6 +166,8 @@ exports.getCategoryStandings = async (req, res) => {
             return res.status(404).json({ message: "Catégorie non trouvée dans ce tournoi" });
         }
 
+        const category = categories[0];
+
         // Récupérer les paramètres de points du tournoi
         const [tournaments] = await db.query(
             'SELECT points_win, points_draw, points_loss FROM Tournament WHERE Tournament_Id = ?',
@@ -174,10 +176,10 @@ exports.getCategoryStandings = async (req, res) => {
 
         const pointsConfig = tournaments[0] || { points_win: 3, points_draw: 1, points_loss: 0 };
 
-        // Récupérer toutes les équipes de cette catégorie
+        // Récupérer toutes les équipes qui ont Category_Id correspondant
         const [teams] = await db.query(
-            'SELECT * FROM Team WHERE age_category = ? AND Tournament_Id = ?',
-            [categories[0].name, tournamentId]
+            'SELECT Team_Id, name, logo, Category_Id FROM Team WHERE Category_Id = ? AND Tournament_Id = ?',
+            [id, tournamentId]
         );
 
         if (teams.length === 0) {
@@ -186,14 +188,20 @@ exports.getCategoryStandings = async (req, res) => {
 
         const teamIds = teams.map(team => team.Team_Id);
 
-        // Récupérer tous les matchs des équipes de cette catégorie
+        // Vérifier qu'on a bien des équipes
+        if (teamIds.length === 0) {
+            return res.status(404).json({ message: "Aucune équipe trouvée pour calculer le classement" });
+        }
+
+        // Récupérer tous les matchs terminés impliquant ces équipes
+        const placeholders = teamIds.map(() => '?').join(',');
         const [games] = await db.query(
-            `SELECT * FROM Game 
-             WHERE (Team1_Id IN (${teamIds.map(() => '?').join(',')}) 
-                OR Team2_Id IN (${teamIds.map(() => '?').join(',')}))
-               AND Tournament_Id = ? 
-               AND is_completed = 1`,
-            [...teamIds, ...teamIds, tournamentId]
+            `SELECT g.Game_Id, g.Team1_Id, g.Team2_Id, g.Team1_Score, g.Team2_Score, g.is_completed 
+             FROM Game g 
+             WHERE g.is_completed = 1 
+               AND g.Tournament_Id = ?
+               AND (g.Team1_Id IN (${placeholders}) OR g.Team2_Id IN (${placeholders}))`,
+            [tournamentId, ...teamIds, ...teamIds]
         );
 
         // Calculer les statistiques pour chaque équipe
@@ -203,12 +211,14 @@ exports.getCategoryStandings = async (req, res) => {
                 Team_Id: team.Team_Id,
                 name: team.name,
                 logo: team.logo,
-                paid: team.paid,
                 matchesPlayed: 0,
                 wins: 0,
                 losses: 0,
                 draws: 0,
-                points: 0
+                points: 0,
+                goalsFor: 0,
+                goalsAgainst: 0,
+                goalDifference: 0
             };
         });
 
@@ -216,24 +226,30 @@ exports.getCategoryStandings = async (req, res) => {
             const team1Stats = teamStats[game.Team1_Id];
             const team2Stats = teamStats[game.Team2_Id];
 
+            // Vérifier que les deux équipes sont dans notre catégorie
             if (team1Stats && team2Stats) {
                 team1Stats.matchesPlayed++;
                 team2Stats.matchesPlayed++;
+                
+                const team1Score = game.Team1_Score || 0;
+                const team2Score = game.Team2_Score || 0;
+                
+                team1Stats.goalsFor += team1Score;
+                team1Stats.goalsAgainst += team2Score;
+                team2Stats.goalsFor += team2Score;
+                team2Stats.goalsAgainst += team1Score;
 
-                if (game.Team1_Score > game.Team2_Score) {
-                    // Équipe 1 gagne
+                if (team1Score > team2Score) {
                     team1Stats.wins++;
                     team1Stats.points += pointsConfig.points_win;
                     team2Stats.losses++;
                     team2Stats.points += pointsConfig.points_loss;
-                } else if (game.Team1_Score < game.Team2_Score) {
-                    // Équipe 2 gagne
+                } else if (team1Score < team2Score) {
                     team2Stats.wins++;
                     team2Stats.points += pointsConfig.points_win;
                     team1Stats.losses++;
                     team1Stats.points += pointsConfig.points_loss;
                 } else {
-                    // Match nul
                     team1Stats.draws++;
                     team2Stats.draws++;
                     team1Stats.points += pointsConfig.points_draw;
@@ -242,16 +258,18 @@ exports.getCategoryStandings = async (req, res) => {
             }
         });
 
+        // Calculer la différence de buts
+        Object.values(teamStats).forEach(team => {
+            team.goalDifference = team.goalsFor - team.goalsAgainst;
+        });
+
         // Convertir en tableau et trier
         const standings = Object.values(teamStats);
         standings.sort((a, b) => {
-            if (b.points !== a.points) {
-                return b.points - a.points;
-            }
-            if (b.wins !== a.wins) {
-                return b.wins - a.wins;
-            }
-            return a.matchesPlayed - b.matchesPlayed;
+            if (b.points !== a.points) return b.points - a.points;
+            if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+            if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+            return b.wins - a.wins;
         });
 
         // Ajouter le rang
@@ -260,7 +278,12 @@ exports.getCategoryStandings = async (req, res) => {
             rank: index + 1
         }));
 
-        res.status(200).json(rankedStandings);
+        res.status(200).json({
+            categoryId: parseInt(id),
+            categoryName: category.name,
+            tournamentId: parseInt(tournamentId),
+            standings: rankedStandings
+        });
     } catch (error) {
         console.error('Erreur lors de la récupération du classement de la catégorie:', error);
         res.status(500).json({
