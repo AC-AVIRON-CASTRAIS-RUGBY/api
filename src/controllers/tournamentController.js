@@ -32,7 +32,7 @@ exports.getTournamentById = async (req, res) => {
 };
 
 exports.createTournament = async (req, res) => {
-    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id } = req.body;
+    const { name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id, image } = req.body;
 
     // Validation des champs obligatoires
     if (!name || !start_date || !location || !account_id) {
@@ -50,8 +50,8 @@ exports.createTournament = async (req, res) => {
         }
 
         const [result] = await db.query(
-            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [name, description, start_date, location, break_time || 5, points_win || 3, points_draw || 1, points_loss || 0, account_id]
+            'INSERT INTO Tournament (name, description, start_date, location, break_time, points_win, points_draw, points_loss, account_id, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [name, description, start_date, location, break_time || 5, points_win || 3, points_draw || 1, points_loss || 0, account_id, image || null]
         );
 
         res.status(201).json({
