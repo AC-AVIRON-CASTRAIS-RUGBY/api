@@ -31,7 +31,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Servir les fichiers statiques depuis le dossier uploads
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/', routes);
 
