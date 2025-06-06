@@ -354,7 +354,7 @@
  *               items:
  *                 $ref: '#/components/schemas/Team'
  *   post:
- *     summary: Crée une nouvelle équipe
+ *     summary: Crée une nouvelle équipe dans un tournoi
  *     tags: [Équipes]
  *     parameters:
  *       - in: path
@@ -362,15 +362,59 @@
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID du tournoi
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Team'
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nom de l'équipe
+ *                 example: "FC Barcelona U10"
+ *               logo:
+ *                 type: string
+ *                 description: URL du logo de l'équipe
+ *                 example: "https://example.com/logo.png"
+ *               Category_Id:
+ *                 type: integer
+ *                 description: ID de la catégorie d'âge (optionnel, peut être assigné plus tard)
+ *                 example: 1
+ *               paid:
+ *                 type: boolean
+ *                 description: Statut de paiement
+ *                 default: false
+ *                 example: false
  *     responses:
  *       201:
- *         description: Équipe créée
+ *         description: Équipe créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Équipe créée avec succès"
+ *                 teamId:
+ *                   type: integer
+ *                   example: 123
+ *       400:
+ *         description: Données invalides ou catégorie non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Catégorie non trouvée dans ce tournoi"
+ *       500:
+ *         description: Erreur serveur
  *
  * /teams/tournaments/{tournamentId}/{id}:
  *   get:

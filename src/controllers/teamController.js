@@ -41,9 +41,23 @@ exports.createTeam = async (req, res) => {
     }
 
     try {
+        // Si Category_Id est fourni, vérifier qu'il existe dans le tournoi
+        if (Category_Id) {
+            const [categories] = await db.query(
+                'SELECT * FROM Category WHERE Category_Id = ? AND Tournament_Id = ?',
+                [Category_Id, Tournament_Id]
+            );
+            
+            if (categories.length === 0) {
+                return res.status(400).json({ 
+                    message: "Catégorie non trouvée dans ce tournoi" 
+                });
+            }
+        }
+
         const [result] = await db.query(
             'INSERT INTO Team (name, logo, Category_Id, paid, Tournament_Id) VALUES (?, ?, ?, ?, ?)',
-            [name, logo, Category_Id, paid || false, Tournament_Id]
+            [name, logo || null, Category_Id || null, paid || false, Tournament_Id]
         );
 
         res.status(201).json({
@@ -76,6 +90,20 @@ exports.updateTeam = async (req, res) => {
         }
 
         const current = currentTeam[0];
+
+        // Si Category_Id est fourni, vérifier qu'il existe dans le tournoi
+        if (Category_Id !== undefined && Category_Id !== null) {
+            const [categories] = await db.query(
+                'SELECT * FROM Category WHERE Category_Id = ? AND Tournament_Id = ?',
+                [Category_Id, Tournament_Id]
+            );
+            
+            if (categories.length === 0) {
+                return res.status(400).json({ 
+                    message: "Catégorie non trouvée dans ce tournoi" 
+                });
+            }
+        }
 
         // Construire la requête avec les valeurs fournies ou existantes
         const [result] = await db.query(
