@@ -136,7 +136,7 @@ exports.getTournamentsByRefereeId = async (req, res) => {
 };
 
 exports.createReferee = async (req, res) => {
-    const { lastName, firstName, password, tournamentId } = req.body;
+    const { lastName, firstName, password, tournamentId, loginUUID } = req.body;
 
     if (!lastName || !firstName || !password || !tournamentId) {
         return res.status(400).json({ 
@@ -151,11 +151,6 @@ exports.createReferee = async (req, res) => {
         if (tournaments.length === 0) {
             return res.status(400).json({ message: "Tournoi non trouvé" });
         }
-
-        // Générer un UUID unique pour l'arbitre
-        const loginUUID = uuidv4();
-
-        const password = password ? require('bcrypt').hashSync(password, 10) : null;
 
         const [result] = await db.query(
             'INSERT INTO Referee (last_name, first_name, loginUUID, password, Tournament_Id) VALUES (?, ?, ?, ?, ?)',
@@ -194,45 +189,6 @@ exports.getRefereesByTournamentIdDirect = async (req, res) => {
         console.error('Erreur lors de la récupération des arbitres du tournoi:', error);
         res.status(500).json({
             message: "Une erreur est survenue lors de la récupération des arbitres du tournoi",
-            error: error.message
-        });
-    }
-};
-
-exports.createRefereeAccount = async (req, res) => {
-    const { lastName, firstName, loginUUID, password, tournamentId } = req.body;
-    const { refereeId } = req.params;
-
-    if (!lastName || !firstName || !loginUUID || !password || !tournamentId) {
-        return res.status(400).json({ 
-            message: "Tous les champs sont requis" 
-        });
-    }
-
-    try {
-        // Vérifier que l'arbitre existe
-        const [referees] = await db.query('SELECT * FROM Referee WHERE Referee_Id = ?', [refereeId]);
-        
-        if (referees.length === 0) {
-            return res.status(404).json({ message: "Arbitre non trouvé" });
-        }        // Vérifier que l'arbitre n'a pas déjà un compte
-        if (referees[0].password) {
-            return res.status(400).json({ message: "Cet arbitre a déjà un compte" });
-        }
-
-        // Mettre à jour l'arbitre avec les nouvelles informations
-        await db.query(
-            'UPDATE Referee SET last_name = ?, first_name = ?, loginUUID = ?, password = ?, Tournament_Id = ? WHERE Referee_Id = ?',
-            [lastName, firstName, loginUUID, password, tournamentId, refereeId]
-        );
-
-        res.status(201).json({
-            message: "Compte arbitre créé avec succès"
-        });
-    } catch (error) {
-        console.error('Erreur lors de la création du compte arbitre:', error);
-        res.status(500).json({
-            message: "Une erreur est survenue lors de la création du compte",
             error: error.message
         });
     }
