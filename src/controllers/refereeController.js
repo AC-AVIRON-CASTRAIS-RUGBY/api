@@ -220,13 +220,10 @@ exports.createRefereeAccount = async (req, res) => {
             return res.status(400).json({ message: "Cet arbitre a déjà un compte" });
         }
 
-        // Hasher le mot de passe
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         // Mettre à jour l'arbitre avec les nouvelles informations
         await db.query(
             'UPDATE Referee SET last_name = ?, first_name = ?, loginUUID = ?, password = ?, Tournament_Id = ? WHERE Referee_Id = ?',
-            [lastName, firstName, loginUUID, hashedPassword, tournamentId, refereeId]
+            [lastName, firstName, loginUUID, password, tournamentId, refereeId]
         );
 
         res.status(201).json({

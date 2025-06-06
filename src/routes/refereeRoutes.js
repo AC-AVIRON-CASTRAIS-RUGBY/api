@@ -10,21 +10,7 @@ const refereeController = require('../controllers/refereeController');
  *     tags: [Arbitres]
  *     responses:
  *       200:
- *         description: Arbitres récupérés avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Referee'
- *       500:
- *         description: Erreur serveur
- */
-router.get('/', refereeController.getAllReferees);
-
-/**
- * @swagger
- * /referees:
+ *         description: Liste des arbitres
  *   post:
  *     summary: Crée un nouvel arbitre
  *     tags: [Arbitres]
@@ -46,24 +32,20 @@ router.get('/', refereeController.getAllReferees);
  *                 type: string
  *               password:
  *                 type: string
- *                 format: password
  *               tournamentId:
  *                 type: integer
  *     responses:
  *       201:
  *         description: Arbitre créé avec succès
- *       400:
- *         description: Données invalides
- *       500:
- *         description: Erreur serveur
  */
+router.get('/', refereeController.getAllReferees);
 router.post('/', refereeController.createReferee);
 
 /**
  * @swagger
  * /referees/{id}:
  *   get:
- *     summary: Récupère un arbitre par son ID
+ *     summary: Récupère un arbitre par ID
  *     tags: [Arbitres]
  *     parameters:
  *       - in: path
@@ -71,24 +53,9 @@ router.post('/', refereeController.createReferee);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID de l'arbitre
  *     responses:
  *       200:
- *         description: Arbitre récupéré avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Referee'
- *       404:
- *         description: Arbitre non trouvé
- *       500:
- *         description: Erreur serveur
- */
-router.get('/:id', refereeController.getRefereeById);
-
-/**
- * @swagger
- * /referees/{id}:
+ *         description: Arbitre trouvé
  *   put:
  *     summary: Met à jour un arbitre
  *     tags: [Arbitres]
@@ -98,35 +65,15 @@ router.get('/:id', refereeController.getRefereeById);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID de l'arbitre
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               last_name:
- *                 type: string
- *               first_name:
- *                 type: string
- *               loginUUID:
- *                 type: string
- *               Tournament_Id:
- *                 type: integer
+ *             $ref: '#/components/schemas/Referee'
  *     responses:
  *       200:
- *         description: Arbitre mis à jour avec succès
- *       404:
- *         description: Arbitre non trouvé
- *       500:
- *         description: Erreur serveur
- */
-router.put('/:id', refereeController.updateReferee);
-
-/**
- * @swagger
- * /referees/{id}:
+ *         description: Arbitre mis à jour
  *   delete:
  *     summary: Supprime un arbitre
  *     tags: [Arbitres]
@@ -136,97 +83,13 @@ router.put('/:id', refereeController.updateReferee);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID de l'arbitre
  *     responses:
  *       200:
- *         description: Arbitre supprimé avec succès
- *       404:
- *         description: Arbitre non trouvé
- *       500:
- *         description: Erreur serveur
+ *         description: Arbitre supprimé
  */
+router.get('/:id', refereeController.getRefereeById);
+router.put('/:id', refereeController.updateReferee);
 router.delete('/:id', refereeController.deleteReferee);
-
-/**
- * @swagger
- * /referees/uuid/{uuid}:
- *   get:
- *     summary: Récupère un arbitre par son UUID
- *     tags: [Arbitres]
- *     parameters:
- *       - in: path
- *         name: uuid
- *         required: true
- *         schema:
- *           type: string
- *         description: UUID de l'arbitre
- *     responses:
- *       200:
- *         description: Arbitre récupéré avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Referee'
- *       404:
- *         description: Arbitre non trouvé
- *       500:
- *         description: Erreur serveur
- */
-router.get('/uuid/:uuid', refereeController.getRefereeByUUID);
-
-/**
- * @swagger
- * /referees/{id}/games:
- *   get:
- *     summary: Récupère tous les matchs d'un arbitre
- *     tags: [Arbitres]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de l'arbitre
- *     responses:
- *       200:
- *         description: Matchs récupérés avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Game'
- *       500:
- *         description: Erreur serveur
- */
-router.get('/:id/games', refereeController.getGamesByRefereeId);
-
-/**
- * @swagger
- * /referees/{id}/tournaments:
- *   get:
- *     summary: Récupère tous les tournois d'un arbitre
- *     tags: [Arbitres]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de l'arbitre
- *     responses:
- *       200:
- *         description: Tournois récupérés avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Tournament'
- *       500:
- *         description: Erreur serveur
- */
-router.get('/:id/tournaments', refereeController.getTournamentsByRefereeId);
 
 /**
  * @swagger
@@ -240,54 +103,10 @@ router.get('/:id/tournaments', refereeController.getTournamentsByRefereeId);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID du tournoi
  *     responses:
  *       200:
- *         description: Arbitres récupérés avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Referee'
- *       404:
- *         description: Aucun arbitre trouvé pour ce tournoi
- *       500:
- *         description: Erreur serveur
+ *         description: Liste des arbitres du tournoi
  */
 router.get('/tournaments/:tournamentId', refereeController.getRefereesByTournamentIdDirect);
-
-/**
- * @swagger
- * /referees/login:
- *   post:
- *     summary: Connexion d'un arbitre
- *     tags: [Arbitres]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - loginUUID
- *               - password
- *             properties:
- *               loginUUID:
- *                 type: string
- *               password:
- *                 type: string
- *                 format: password
- *     responses:
- *       200:
- *         description: Connexion réussie
- *       400:
- *         description: Paramètres manquants
- *       401:
- *         description: Identifiants invalides
- *       500:
- *         description: Erreur serveur
- */
-router.post('/login', refereeController.loginReferee);
 
 module.exports = router;
