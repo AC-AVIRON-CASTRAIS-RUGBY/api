@@ -37,30 +37,42 @@ router.get('/', gameController.getAllGames);
  *             required:
  *               - Team1_Id
  *               - Team2_Id
+ *               - Referee_Id
  *               - Pool_Id
  *             properties:
  *               start_time:
  *                 type: string
  *                 format: date-time
+ *                 description: Heure de début du match
  *               Team1_Id:
  *                 type: integer
+ *                 description: ID de l'équipe 1
  *               Team2_Id:
  *                 type: integer
- *               Team1_Score:
- *                 type: integer
- *               Team2_Score:
- *                 type: integer
- *               is_completed:
- *                 type: boolean
+ *                 description: ID de l'équipe 2
  *               Referee_Id:
  *                 type: integer
+ *                 description: ID de l'arbitre
  *               Pool_Id:
  *                 type: integer
- *               Field_Id:
+ *                 description: ID de la poule
+ *               Tournament_Id:
  *                 type: integer
+ *                 description: ID du tournoi
  *     responses:
  *       201:
  *         description: Match créé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Match créé avec succès"
+ *                 gameId:
+ *                   type: integer
+ *                   example: 123
  *       400:
  *         description: Données invalides
  *       500:
@@ -118,25 +130,42 @@ router.get('/:id', gameController.getGameById);
  *               start_time:
  *                 type: string
  *                 format: date-time
+ *                 description: Heure de début du match
  *               Team1_Id:
  *                 type: integer
+ *                 description: ID de l'équipe 1
  *               Team2_Id:
  *                 type: integer
+ *                 description: ID de l'équipe 2
  *               Team1_Score:
  *                 type: integer
+ *                 description: Score de l'équipe 1
  *               Team2_Score:
  *                 type: integer
+ *                 description: Score de l'équipe 2
  *               is_completed:
  *                 type: boolean
+ *                 description: Match terminé ou non
  *               Referee_Id:
  *                 type: integer
+ *                 description: ID de l'arbitre
  *               Pool_Id:
  *                 type: integer
+ *                 description: ID de la poule
  *               Field_Id:
  *                 type: integer
+ *                 description: ID du terrain
  *     responses:
  *       200:
  *         description: Match mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Match mis à jour avec succès"
  *       404:
  *         description: Match non trouvé
  *       500:
@@ -160,6 +189,14 @@ router.put('/:id', gameController.updateGame);
  *     responses:
  *       200:
  *         description: Match supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Match supprimé avec succès"
  *       404:
  *         description: Match non trouvé
  *       500:
@@ -223,10 +260,12 @@ router.get('/pool/:poolId', gameController.getGamesByPoolId);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: "5 matchs générés avec succès pour la poule 1"
  *                 gamesCreated:
  *                   type: integer
+ *                   example: 5
  *       400:
- *         description: Pas assez d'équipes dans la poule ou aucun arbitre disponible
+ *         description: Données invalides ou pas assez d'équipes
  *       404:
  *         description: Poule non trouvée
  *       500:
