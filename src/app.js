@@ -50,6 +50,7 @@ app.use('/locker-rooms', lockerRoomRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/schedule', scheduleRoutes);
 app.use('/auth', authRoutes);
+app.use('/upload', uploadRoutes);
 
 const swaggerSettings = {
     swaggerDefinition: {

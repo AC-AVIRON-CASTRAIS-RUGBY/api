@@ -86,7 +86,6 @@ router.post('/image', upload.single('image'), (req, res) => {
             return res.status(400).json({ message: "Aucun fichier n'a été envoyé" });
         }
 
-        // Construire l'URL d'accès au fichier
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
