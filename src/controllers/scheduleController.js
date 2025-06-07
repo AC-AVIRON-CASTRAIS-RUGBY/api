@@ -190,7 +190,9 @@ exports.getTournamentSchedule = async (req, res) => {
                     t2.name AS team2_name,
                     p.name AS pool_name,
                     r.last_name AS referee_name,
-                    f.name AS field_name
+                    f.name AS field_name,
+                    t1.logo AS team1_logo,
+                    t2.logo AS team2_logo
              FROM Game g 
              JOIN Team t1 ON g.Team1_Id = t1.Team_Id
              JOIN Team t2 ON g.Team2_Id = t2.Team_Id
