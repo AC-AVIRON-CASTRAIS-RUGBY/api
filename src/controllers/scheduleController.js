@@ -215,12 +215,14 @@ exports.getTournamentSchedule = async (req, res) => {
                 team1: {
                     id: game.Team1_Id,
                     name: game.team1_name,
-                    score: game.Team1_Score
+                    score: game.Team1_Score,
+                    logo: game.logo
                 },
                 team2: {
                     id: game.Team2_Id,
                     name: game.team2_name,
-                    score: game.Team2_Score
+                    score: game.Team2_Score,
+                    logo: game.logo
                 },
                 referee: game.referee_name,
                 field: game.field_name,
