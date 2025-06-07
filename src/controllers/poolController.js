@@ -44,7 +44,7 @@ exports.getPoolById = async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée" });
+            return res.status(503).json({ message: "Poule non trouvée" });
         }
 
         res.status(200).json(rows[0]);
@@ -138,7 +138,7 @@ exports.updatePool = async (req, res) => {
         );
 
         if (pools.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée dans ce tournoi" });
+            return res.status(503).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
         // Vérifier que la nouvelle phase appartient au tournoi spécifié
@@ -191,7 +191,7 @@ exports.deletePool = async (req, res) => {
         );
 
         if (pools.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée dans ce tournoi" });
+            return res.status(503).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
         const [result] = await db.query('DELETE FROM Pool WHERE Pool_Id = ?', [id]);
@@ -216,7 +216,7 @@ exports.getPoolStandings = async (req, res) => {
         );
 
         if (poolCheck.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée dans ce tournoi" });
+            return res.status(503).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
         // Récupérer toutes les équipes de la poule
@@ -226,7 +226,7 @@ exports.getPoolStandings = async (req, res) => {
         );
 
         if (teams.length === 0) {
-            return res.status(204).json({ message: "Aucune équipe trouvée dans cette poule" });
+            return res.status(503).json({ message: "Aucune équipe trouvée dans cette poule" });
         }
 
         // Récupérer tous les matchs de la poule pour ce tournoi
@@ -569,7 +569,7 @@ exports.addTeamToPool = async (req, res) => {
         );
 
         if (pools.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée dans ce tournoi" });
+            return res.status(503).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
         // Vérifier que l'équipe appartient au tournoi spécifié
@@ -610,7 +610,7 @@ exports.removeTeamFromPool = async (req, res) => {
         );
 
         if (pools.length === 0) {
-            return res.status(204).json({ message: "Poule non trouvée dans ce tournoi" });
+            return res.status(503).json({ message: "Poule non trouvée dans ce tournoi" });
         }
 
         // Vérifier que l'équipe appartient au tournoi spécifié
@@ -629,7 +629,7 @@ exports.removeTeamFromPool = async (req, res) => {
         );
 
         if (result.affectedRows === 0) {
-            return res.status(204).json({
+            return res.status(503).json({
                 message: "Association poule-équipe non trouvée"
             });
         }
