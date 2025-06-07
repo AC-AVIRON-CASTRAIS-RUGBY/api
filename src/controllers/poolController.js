@@ -370,7 +370,7 @@ exports.getAllPoolsStandingsByTournament = async (req, res) => {
         );
 
         if (pools.length === 0) {
-            return res.status(204).json({ message: "Aucune poule trouvée pour ce tournoi" });
+            return res.status(503).json({ message: "Aucune poule trouvée pour ce tournoi" });
         }
 
         // Récupérer les paramètres du tournoi pour le calcul des points
@@ -425,7 +425,7 @@ exports.getAllPoolsStandingsByTournament = async (req, res) => {
             teams.forEach(team => {
                 // Extrait le nom du club (sans la catégorie d'âge)
                 const clubName = team.name.replace(/\s+U\d+$/, '').trim();
-                
+
                 if (!clubsMap.has(clubName)) {
                     clubsMap.set(clubName, {
                         name: clubName,
@@ -499,7 +499,7 @@ exports.getAllPoolsStandingsByTournament = async (req, res) => {
 
             // Convertir la Map en tableau et trier
             const clubStandings = Array.from(clubsMap.values());
-            
+
             // Trier le classement par points (décroissant), puis par victoires, puis par différence de buts
             clubStandings.sort((a, b) => {
                 // D'abord par points
