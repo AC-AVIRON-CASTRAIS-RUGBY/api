@@ -645,3 +645,74 @@ exports.removeTeamFromPool = async (req, res) => {
         });
     }
 };
+
+// Classement global de toutes les équipes d'un tournoi (toutes poules confondues)
+exports.getTournamentStandings = async (req, res) => {
+    const { tournamentId } = req.params;
+    try {
+        // Récupérer toutes les équipes du tournoi
+        const [teams] = await db.query(
+            'SELECT t.* FROM Team t WHERE t.Tournament_Id = ?',
+            [tournamentId]
+        );
+        if (teams.length === 0) {
+            return res.status(200).json({ standings: [] });
+        }
+        // Récupérer tous les matchs du tournoi
+        const [games] = await db.query(
+            'SELECT * FROM Game WHERE Tournament_Id = ?',
+            [tournamentId]
+        );
+        // Initialiser le classement
+        const standings = teams.map(team => ({
+            teamId: team.Team_Id,
+            name: team.name,
+            matchesPlayed: 0,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            goalsFor: 0,
+            goalsAgainst: 0,
+            points: 0
+        }));
+        const standingsMap = new Map();
+        standings.forEach(s => standingsMap.set(s.teamId, s));
+        // Calculer les stats pour chaque match
+        games.forEach(game => {
+            const home = standingsMap.get(game.Home_Team_Id);
+            const away = standingsMap.get(game.Away_Team_Id);
+            if (!home || !away) return;
+            // Mettre à jour les stats
+            home.matchesPlayed++;
+            away.matchesPlayed++;
+            home.goalsFor += game.Home_Score;
+            home.goalsAgainst += game.Away_Score;
+            away.goalsFor += game.Away_Score;
+            away.goalsAgainst += game.Home_Score;
+            if (game.Home_Score > game.Away_Score) {
+                home.wins++;
+                home.points += 3;
+                away.losses++;
+            } else if (game.Home_Score < game.Away_Score) {
+                away.wins++;
+                away.points += 3;
+                home.losses++;
+            } else {
+                home.draws++;
+                away.draws++;
+                home.points++;
+                away.points++;
+            }
+        });
+        // Trier le classement (points, différence de buts, buts marqués)
+        standings.sort((a, b) =>
+            b.points - a.points ||
+            (b.goalsFor - b.goalsAgainst) - (a.goalsFor - a.goalsAgainst) ||
+            b.goalsFor - a.goalsFor
+        );
+        res.status(200).json({ standings });
+    } catch (error) {
+        console.error('Erreur lors du calcul du classement global:', error);
+        res.status(500).json({ message: "Erreur lors du calcul du classement global", error: error.message });
+    }
+};
