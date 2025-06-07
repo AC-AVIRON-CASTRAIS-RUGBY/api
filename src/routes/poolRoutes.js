@@ -233,6 +233,6 @@ router.get('/tournaments/:tournamentId/:id/standings', poolController.getPoolSta
  *       200:
  *         description: Classement général récupéré avec succès
  */
-router.get('/tournaments/standings/:tournamentId/', poolController.getTournamentStandings);
+router.get('/standings/:tournamentId', poolController.getTournamentStandings);
 
 module.exports = router;
